@@ -1,0 +1,37 @@
+with-expecter: false
+packages:
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/use_cases/user/create_user"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(UseCase)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/delete_user:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/use_cases/user/delete_user"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(UseCase)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/use_cases/user/get_user_by_id"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(UseCase)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/list_users:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/use_cases/user/list_users"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(UseCase)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/use_cases/user/update_user"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(UseCase)"
