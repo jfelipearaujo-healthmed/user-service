@@ -34,3 +34,18 @@ make destroy
 ## Automated deployment
 
 The automated deployment is triggered by a GitHub Action.
+
+# Endpoints
+
+| Completed | Method | Endpoint                       | Description                  |
+| --------- | ------ | ------------------------------ | ---------------------------- |
+| ✅         | GET    | `/users/me`                    | Get the current user         |
+| ✅         | POST   | `/users`                       | Create a user                |
+| ✅         | PUT    | `/users/me`                    | Update a user                |
+| 🚧         | GET    | `/users/me/reviews`            | Get the current user reviews |
+| 🚧         | POST   | `/users/me/reviews`            | Create a user review         |
+| 🚧         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      |
+
+# License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

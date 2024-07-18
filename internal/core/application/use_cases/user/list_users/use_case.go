@@ -11,10 +11,10 @@ import (
 )
 
 type useCase struct {
-	database *persistence.Database
+	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.Database) contract.UseCase {
+func NewUseCase(database *persistence.DbService) contract.UseCase {
 	return &useCase{
 		database: database,
 	}

@@ -11,10 +11,10 @@ import (
 )
 
 type useCase struct {
-	database *persistence.Database
+	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.Database) contract.UseCase {
+func NewUseCase(database *persistence.DbService) contract.UseCase {
 	return &useCase{
 		database: database,
 	}
@@ -25,7 +25,7 @@ func (uc *useCase) Execute(ctx context.Context, id uint) (*entities.User, error)
 
 	user := &entities.User{}
 
-	result := tx.First(user, id)
+	result := tx.Preload("Doctor").First(user, id)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {

@@ -35,3 +35,10 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           inpackage: true
           include-regex: "(UseCase)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/external/shared/hasher:
+        config:
+          filename: "mock.go"
+          dir: "./internal/external/shared/hasher"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(Hasher)"

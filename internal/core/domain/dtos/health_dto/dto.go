@@ -1,4 +1,4 @@
-package health
+package health_dto
 
 type HealthStatus struct {
 	Status string `json:"status"`
@@ -7,12 +7,14 @@ type HealthStatus struct {
 
 func New(err error) *HealthStatus {
 	status := "ok"
+	errMsg := ""
 	if err != nil {
 		status = "error"
+		errMsg = err.Error()
 	}
 
 	return &HealthStatus{
 		Status: status,
-		Err:    err.Error(),
+		Err:    errMsg,
 	}
 }
