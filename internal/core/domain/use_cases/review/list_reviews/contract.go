@@ -1,4 +1,4 @@
-package list_reviews
+package list_reviews_contract
 
 import (
 	"context"
@@ -7,5 +7,5 @@ import (
 )
 
 type UseCase interface {
-	Execute(ctx context.Context, userID uint) ([]*entities.Review, error)
+	Execute(ctx context.Context, userID uint) ([]entities.Review, error)
 }

@@ -1,4 +1,4 @@
-package update_user
+package update_user_contract
 
 import (
 	"context"

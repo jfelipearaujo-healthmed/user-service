@@ -64,8 +64,18 @@ Content-Type: application/json
 Authorization: Bearer {{token}}
 
 {
-    "doctor_id": 3,
+    "doctor_id": 1,
     "appointment_id": 1,
     "rating": 4.5,
     "feedback": "Great service"
 }
+
+### Get a Review by ID
+GET {{host}}/api/v1/users/me/reviews/1
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Get Reviews of logged user
+GET {{host}}/api/v1/users/me/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}

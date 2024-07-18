@@ -1,4 +1,4 @@
-package create_user
+package create_user_uc
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/user_dto"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
-	contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
+	create_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ type useCase struct {
 	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.DbService) contract.UseCase {
+func NewUseCase(database *persistence.DbService) create_user_contract.UseCase {
 	return &useCase{
 		database: database,
 	}

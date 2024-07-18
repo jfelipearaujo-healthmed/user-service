@@ -1,4 +1,4 @@
-package get_review_by_id
+package get_review_by_id_contract
 
 import (
 	"context"
@@ -7,5 +7,5 @@ import (
 )
 
 type UseCase interface {
-	Execute(ctx context.Context, id uint) (*entities.Review, error)
+	Execute(ctx context.Context, userID uint, reviewID uint) (*entities.Review, error)
 }

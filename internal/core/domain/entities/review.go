@@ -11,6 +11,6 @@ type Review struct {
 	Rating        float64 `json:"rating"`
 	Feedback      string  `json:"feedback"`
 
-	Doctor  Doctor `gorm:"foreignKey:DoctorID"`
-	Patient User   `gorm:"foreignKey:PatientID"`
+	Doctor  User `gorm:"foreignKey:DoctorID"`
+	Patient User `gorm:"foreignKey:PatientID"`
 }

@@ -1,4 +1,4 @@
-package create_user
+package create_user_contract
 
 import (
 	"context"

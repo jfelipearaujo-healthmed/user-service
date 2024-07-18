@@ -1,4 +1,4 @@
-package delete_user
+package delete_user_contract
 
 import "context"
 

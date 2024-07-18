@@ -1,4 +1,4 @@
-package update_user
+package update_user_uc
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/user_dto"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
-	contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
+	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"gorm.io/gorm"
@@ -17,7 +17,7 @@ type useCase struct {
 	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.DbService) contract.UseCase {
+func NewUseCase(database *persistence.DbService) update_user_contract.UseCase {
 	return &useCase{
 		database: database,
 	}

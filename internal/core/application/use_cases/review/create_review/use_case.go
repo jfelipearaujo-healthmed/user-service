@@ -1,4 +1,4 @@
-package create_review
+package create_review_uc
 
 import (
 	"context"

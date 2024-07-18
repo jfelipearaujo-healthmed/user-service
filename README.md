@@ -38,7 +38,7 @@ The automated deployment is triggered by a GitHub Action.
 # Endpoints
 
 Legend:
-- ✅: Completed
+- ✅: Development completed
 - 🚧: In progress
 - 💤: Not started
 
@@ -48,9 +48,9 @@ Legend:
 | ✅         | GET    | `/users/me`                    | Get the current user         | Any       |
 | ✅         | POST   | `/users`                       | Create a user                | Any       |
 | ✅         | PUT    | `/users/me`                    | Update a user                | Any       |
-| 💤         | GET    | `/users/me/reviews`            | Get the current user reviews | Any       |
+| ✅         | GET    | `/users/me/reviews`            | Get the current user reviews | Any       |
 | ✅         | POST   | `/users/me/reviews`            | Create a user review         | Patient   |
-| 💤         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      | Any       |
+| ✅         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      | Any       |
 
 # License
 

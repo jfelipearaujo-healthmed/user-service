@@ -1,4 +1,4 @@
-package get_user_by_id
+package get_user_by_id_contract
 
 import (
 	"context"
