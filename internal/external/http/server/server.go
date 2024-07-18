@@ -9,15 +9,18 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	create_review_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/create_review"
 	create_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/create_user"
 	get_user_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/get_user_by_id"
 	update_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/update_user"
+	create_review_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/create_review"
 	create_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
 	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
 	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/config"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/hasher"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/health"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/review/create_review"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/create_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/get_user_by_id"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/update_user"
@@ -37,6 +40,8 @@ type Dependencies struct {
 	CreateUserUseCase  create_user_contract.UseCase
 	GetUserByIdUseCase get_user_by_id_contract.UseCase
 	UpdateUserUseCase  update_user_contract.UseCase
+
+	CreateReviewUseCase create_review_contract.UseCase
 }
 
 type Server struct {
@@ -83,6 +88,8 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 			CreateUserUseCase:  create_user_uc.NewUseCase(dbService),
 			GetUserByIdUseCase: get_user_by_id_uc.NewUseCase(dbService),
 			UpdateUserUseCase:  update_user_uc.NewUseCase(dbService),
+
+			CreateReviewUseCase: create_review_uc.NewUseCase(dbService),
 		},
 	}, nil
 }
@@ -111,6 +118,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	s.addUserAuthRoutes(nonAuthenticated)
 	s.addUserRoutes(authenticated)
+	s.addReviewRoutes(authenticated)
 
 	return e
 }
@@ -133,4 +141,10 @@ func (server *Server) addUserRoutes(g *echo.Group) {
 
 	g.GET("/users/me", getUserByIdHandler.Handle)
 	g.PUT("/users/me", updateUserHandler.Handle)
+}
+
+func (server *Server) addReviewRoutes(g *echo.Group) {
+	createReviewHandler := create_review.NewHandler(server.CreateReviewUseCase)
+
+	g.POST("/users/me/reviews", createReviewHandler.Handle)
 }
