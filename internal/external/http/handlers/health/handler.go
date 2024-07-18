@@ -5,16 +5,16 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/health"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/health_dto"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"github.com/labstack/echo/v4"
 )
 
 type Handler struct {
-	database *persistence.Database
+	database *persistence.DbService
 }
 
-func NewHandler(database *persistence.Database) *Handler {
+func NewHandler(database *persistence.DbService) *Handler {
 	return &Handler{
 		database: database,
 	}
@@ -26,14 +26,14 @@ func (h *Handler) Handle(c echo.Context) error {
 
 	db, err := h.database.Instance.DB()
 	if err != nil {
-		status := health.New(err)
+		status := health_dto.New(err)
 		return c.JSON(http.StatusInternalServerError, status)
 	}
 
 	if err := db.PingContext(ctx); err != nil {
-		status := health.New(err)
+		status := health_dto.New(err)
 		return c.JSON(http.StatusInternalServerError, status)
 	}
 
-	return c.JSON(http.StatusOK, health.New(nil))
+	return c.JSON(http.StatusOK, health_dto.New(nil))
 }

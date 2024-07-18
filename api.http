@@ -1,0 +1,59 @@
+@host=http://localhost:5000
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjE5LCJleHAiOjE3MjEzNTg1OTd9.ifvUAgeZhTK_xGWXh_XPIx3aXOy5_4sxagzBTq-5Uvs
+
+### Health Check
+GET {{host}}/health
+Content-Type: application/json
+
+### Create a User (doctor)
+POST {{host}}/api/v1/users
+Content-Type: application/json
+
+{
+    "full_name": "John Doe",
+    "email": "john@doe.com",
+    "password": "12345678",
+    "document_id": "48606903035",
+    "phone": "1234567890",
+    "role": "doctor",
+    "medical_id": "1234567-SP",
+    "specialty": "Cardiologist",
+    "price": 100
+}
+
+### Create a User (patient)
+POST {{host}}/api/v1/users
+Content-Type: application/json
+
+{
+    "full_name": "John Doe",
+    "email": "john@doe.com",
+    "password": "12345678",
+    "document_id": "73047767068",
+    "phone": "1234567890",
+    "role": "patient"
+}
+
+### Get User
+GET {{host}}/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Update a User (doctor)
+PUT {{host}}/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "medical_id": "1234568-SP",
+    "price": 150
+}
+
+### Update a User (patient)
+PUT {{host}}/api/v1/users/me
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "email": "john@email.com"
+}

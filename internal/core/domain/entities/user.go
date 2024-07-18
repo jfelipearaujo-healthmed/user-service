@@ -6,13 +6,16 @@ type User struct {
 	gorm.Model
 
 	FullName   string `json:"full_name"`
-	Email      string `json:"email"`
+	Email      string `json:"email" gorm:"uniqueIndex"`
 	Password   string `json:"password"`
-	DocumentID string `json:"document_id"`
+	DocumentID string `json:"document_id" gorm:"uniqueIndex"`
 	Phone      string `json:"phone"`
 	Role       string `json:"role"`
 
-	DoctorID *string  `json:"doctor_id"`
-	Doctor   *Doctor  `json:"doctor"`
-	Reviews  []Review `json:"reviews"`
+	Doctor  *Doctor  `gorm:"foreignKey:UserID"`
+	Reviews []Review `gorm:"foreignKey:PatientID"`
+}
+
+func (u *User) IsDoctor() bool {
+	return u.Role == "doctor"
 }
