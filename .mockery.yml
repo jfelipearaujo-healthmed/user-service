@@ -38,7 +38,7 @@ packages:
     github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/hasher:
         config:
           filename: "mock.go"
-          dir: "./internal/core/infrastructure/shared/hasher:"
+          dir: "./internal/core/infrastructure/shared/hasher"
           mockname: "Mock{{.InterfaceName}}"
           inpackage: true
           include-regex: "(Hasher)"
