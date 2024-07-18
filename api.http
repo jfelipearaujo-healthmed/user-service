@@ -1,5 +1,5 @@
 @host=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjE5LCJleHAiOjE3MjEzNTg1OTd9.ifvUAgeZhTK_xGWXh_XPIx3aXOy5_4sxagzBTq-5Uvs
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjE4LCJleHAiOjE3MjEzNTg1OTd9.41zURspIoVBhYc2rHhV3fReNzSllsqfqLLQxld-SPS0
 
 ### Health Check
 GET {{host}}/health
@@ -56,4 +56,16 @@ Authorization: Bearer {{token}}
 
 {
     "email": "john@email.com"
+}
+
+### Create a Review
+POST {{host}}/api/v1/users/me/reviews
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "doctor_id": 3,
+    "appointment_id": 1,
+    "rating": 4.5,
+    "feedback": "Great service"
 }

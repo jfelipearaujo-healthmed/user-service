@@ -43,14 +43,14 @@ Legend:
 - 💤: Not started
 
 
-| Completed | Method | Endpoint                       | Description                  |
-| --------- | ------ | ------------------------------ | ---------------------------- |
-| ✅         | GET    | `/users/me`                    | Get the current user         |
-| ✅         | POST   | `/users`                       | Create a user                |
-| ✅         | PUT    | `/users/me`                    | Update a user                |
-| 💤         | GET    | `/users/me/reviews`            | Get the current user reviews |
-| 🚧         | POST   | `/users/me/reviews`            | Create a user review         |
-| 💤         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      |
+| Completed | Method | Endpoint                       | Description                  | User Role |
+| --------- | ------ | ------------------------------ | ---------------------------- | --------- |
+| ✅         | GET    | `/users/me`                    | Get the current user         | Any       |
+| ✅         | POST   | `/users`                       | Create a user                | Any       |
+| ✅         | PUT    | `/users/me`                    | Update a user                | Any       |
+| 💤         | GET    | `/users/me/reviews`            | Get the current user reviews | Any       |
+| ✅         | POST   | `/users/me/reviews`            | Create a user review         | Patient   |
+| 💤         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      | Any       |
 
 # License
 
