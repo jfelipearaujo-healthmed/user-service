@@ -1,10 +1,10 @@
-package delete_user
+package delete_user_uc
 
 import (
 	"context"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
-	contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/delete_user"
+	delete_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/delete_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 )
 
@@ -12,7 +12,7 @@ type useCase struct {
 	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.DbService) contract.UseCase {
+func NewUseCase(database *persistence.DbService) delete_user_contract.UseCase {
 	return &useCase{
 		database: database,
 	}

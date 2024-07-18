@@ -10,10 +10,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	create_review_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/create_review"
+	get_review_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/get_review_by_id"
+	list_reviews_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/list_reviews"
 	create_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/create_user"
 	get_user_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/get_user_by_id"
 	update_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/update_user"
 	create_review_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/create_review"
+	get_review_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/get_review_by_id"
+	list_reviews_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/list_reviews"
 	create_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
 	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
 	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
@@ -21,6 +25,8 @@ import (
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/hasher"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/health"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/review/create_review"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/review/get_review_by_id"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/review/list_reviews"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/create_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/get_user_by_id"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/update_user"
@@ -41,7 +47,9 @@ type Dependencies struct {
 	GetUserByIdUseCase get_user_by_id_contract.UseCase
 	UpdateUserUseCase  update_user_contract.UseCase
 
-	CreateReviewUseCase create_review_contract.UseCase
+	CreateReviewUseCase  create_review_contract.UseCase
+	GetReviewByIdUseCase get_review_by_id_contract.UseCase
+	ListReviewsUseCase   list_reviews_contract.UseCase
 }
 
 type Server struct {
@@ -89,7 +97,9 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 			GetUserByIdUseCase: get_user_by_id_uc.NewUseCase(dbService),
 			UpdateUserUseCase:  update_user_uc.NewUseCase(dbService),
 
-			CreateReviewUseCase: create_review_uc.NewUseCase(dbService),
+			CreateReviewUseCase:  create_review_uc.NewUseCase(dbService),
+			GetReviewByIdUseCase: get_review_by_id_uc.NewUseCase(dbService),
+			ListReviewsUseCase:   list_reviews_uc.NewUseCase(dbService),
 		},
 	}, nil
 }
@@ -145,6 +155,10 @@ func (server *Server) addUserRoutes(g *echo.Group) {
 
 func (server *Server) addReviewRoutes(g *echo.Group) {
 	createReviewHandler := create_review.NewHandler(server.CreateReviewUseCase)
+	getReviewByIdHandler := get_review_by_id.NewHandler(server.GetReviewByIdUseCase)
+	listReviewsHandler := list_reviews.NewHandler(server.ListReviewsUseCase)
 
 	g.POST("/users/me/reviews", createReviewHandler.Handle)
+	g.GET("/users/me/reviews/:reviewId", getReviewByIdHandler.Handle)
+	g.GET("/users/me/reviews", listReviewsHandler.Handle)
 }

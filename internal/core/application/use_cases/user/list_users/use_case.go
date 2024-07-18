@@ -1,11 +1,11 @@
-package list_users
+package list_users_uc
 
 import (
 	"context"
 	"fmt"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
-	contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/list_users"
+	list_users_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/list_users"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/fields"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 )
@@ -14,13 +14,13 @@ type useCase struct {
 	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.DbService) contract.UseCase {
+func NewUseCase(database *persistence.DbService) list_users_contract.UseCase {
 	return &useCase{
 		database: database,
 	}
 }
 
-func (uc *useCase) Execute(ctx context.Context, filter *contract.Filter) ([]*entities.User, error) {
+func (uc *useCase) Execute(ctx context.Context, filter *list_users_contract.Filter) ([]*entities.User, error) {
 	tx := uc.database.Instance.WithContext(ctx)
 
 	users := []*entities.User{}

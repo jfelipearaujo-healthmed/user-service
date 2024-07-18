@@ -1,11 +1,11 @@
-package get_user_by_id
+package get_user_by_id_uc
 
 import (
 	"context"
 	"errors"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
-	contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
+	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"gorm.io/gorm"
 )
@@ -14,7 +14,7 @@ type useCase struct {
 	database *persistence.DbService
 }
 
-func NewUseCase(database *persistence.DbService) contract.UseCase {
+func NewUseCase(database *persistence.DbService) get_user_by_id_contract.UseCase {
 	return &useCase{
 		database: database,
 	}

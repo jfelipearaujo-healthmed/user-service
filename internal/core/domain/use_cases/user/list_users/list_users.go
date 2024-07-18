@@ -1,4 +1,4 @@
-package list_users
+package list_users_contract
 
 import (
 	"context"
