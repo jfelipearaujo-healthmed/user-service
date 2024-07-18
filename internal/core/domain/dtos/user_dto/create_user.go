@@ -8,7 +8,7 @@ type CreateUserRequest struct {
 	Phone      string `json:"phone" validate:"required,min=5,max=255"`
 	Role       string `json:"role" validate:"required,oneof=doctor patient"`
 
-	DoctorMedicalID string  `json:"medical_id"`
-	DoctorSpecialty string  `json:"specialty"`
-	DoctorPrice     float64 `json:"price"`
+	DoctorMedicalID *string  `json:"medical_id" validate:"omitempty,required,min=5,max=255"`
+	DoctorSpecialty *string  `json:"specialty" validate:"omitempty,required,min=5,max=255"`
+	DoctorPrice     *float64 `json:"price" validate:"omitempty,required,min=1"`
 }

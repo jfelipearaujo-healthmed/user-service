@@ -37,14 +37,20 @@ The automated deployment is triggered by a GitHub Action.
 
 # Endpoints
 
+Legend:
+- ✅: Completed
+- 🚧: In progress
+- 💤: Not started
+
+
 | Completed | Method | Endpoint                       | Description                  |
 | --------- | ------ | ------------------------------ | ---------------------------- |
 | ✅         | GET    | `/users/me`                    | Get the current user         |
 | ✅         | POST   | `/users`                       | Create a user                |
 | ✅         | PUT    | `/users/me`                    | Update a user                |
-| 🚧         | GET    | `/users/me/reviews`            | Get the current user reviews |
+| 💤         | GET    | `/users/me/reviews`            | Get the current user reviews |
 | 🚧         | POST   | `/users/me/reviews`            | Create a user review         |
-| 🚧         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      |
+| 💤         | GET    | `/users/me/reviews/{reviewId}` | Get a user review by id      |
 
 # License
 

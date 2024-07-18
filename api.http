@@ -10,13 +10,13 @@ POST {{host}}/api/v1/users
 Content-Type: application/json
 
 {
-    "full_name": "John Doe",
-    "email": "john@doe.com",
+    "full_name": "John Doe Jr",
+    "email": "john_jr@doe.com",
     "password": "12345678",
-    "document_id": "48606903035",
+    "document_id": "83343169099",
     "phone": "1234567890",
     "role": "doctor",
-    "medical_id": "1234567-SP",
+    "medical_id": "1234561-SP",
     "specialty": "Cardiologist",
     "price": 100
 }
