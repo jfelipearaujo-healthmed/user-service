@@ -9,7 +9,9 @@ var val *goValidator.Validate
 
 func init() {
 	val = goValidator.New(goValidator.WithRequiredStructEnabled())
-	val.RegisterValidation("cpfcnpj", validateCpfCnpj)
+	if err := val.RegisterValidation("cpfcnpj", validateCpfCnpj); err != nil {
+		panic(err)
+	}
 }
 
 func Validate(i interface{}) error {
