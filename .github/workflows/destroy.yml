@@ -19,7 +19,7 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
       - name: Attach to EKS cluster
-        run: aws eks update-kubeconfig --region us-east-1 --name fastfood
+        run: aws eks update-kubeconfig --region us-east-1 --name healthmed
 
       - name: Destroy from EKS
         run: make k8s-destroy id=${{ secrets.AWS_ACCOUNT_ID }}
