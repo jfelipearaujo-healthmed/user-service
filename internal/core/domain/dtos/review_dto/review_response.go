@@ -37,8 +37,8 @@ func MapFromDomain(review *entities.Review) *ReviewResponse {
 func MapFromDomainSlice(reviews []entities.Review) []*ReviewResponse {
 	reviewResponses := make([]*ReviewResponse, len(reviews))
 
-	for i, review := range reviews {
-		reviewResponses[i] = MapFromDomain(&review)
+	for i := range reviews {
+		reviewResponses[i] = MapFromDomain(&reviews[i])
 	}
 
 	return reviewResponses
