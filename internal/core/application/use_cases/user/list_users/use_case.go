@@ -2,40 +2,40 @@ package list_users_uc
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
+	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	list_users_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/list_users"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/fields"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 )
 
 type useCase struct {
-	database *persistence.DbService
+	repository user_repository_contract.Repository
 }
 
-func NewUseCase(database *persistence.DbService) list_users_contract.UseCase {
+func NewUseCase(repository user_repository_contract.Repository) list_users_contract.UseCase {
 	return &useCase{
-		database: database,
+		repository: repository,
 	}
 }
 
-func (uc *useCase) Execute(ctx context.Context, filter *list_users_contract.Filter) ([]*entities.User, error) {
-	tx := uc.database.Instance.WithContext(ctx)
+func (uc *useCase) Execute(ctx context.Context, filter *list_users_contract.Filter) ([]entities.User, error) {
+	repoFilter := &user_repository_contract.ListUsersFilter{}
 
-	users := []*entities.User{}
-
-	fields := fields.GetNonEmptyFields(filter, &fields.ANY_CHAR, &fields.ANY_CHAR)
-
-	query := tx
-
-	for field, value := range fields {
-		query = query.Where(fmt.Sprintf("%s LIKE ?", field), value)
+	if filter.DocumentID != nil {
+		repoFilter.DocumentID = *filter.DocumentID
+	}
+	if filter.Email != nil {
+		repoFilter.Email = *filter.Email
+	}
+	if filter.FullName != nil {
+		repoFilter.FullName = *filter.FullName
+	}
+	if filter.Phone != nil {
+		repoFilter.Phone = *filter.Phone
+	}
+	if filter.Role != nil {
+		repoFilter.Role = *filter.Role
 	}
 
-	if err := query.Find(&users).Error; err != nil {
-		return nil, err
-	}
-
-	return users, nil
+	return uc.repository.List(ctx, repoFilter)
 }

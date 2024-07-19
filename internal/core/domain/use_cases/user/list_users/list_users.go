@@ -7,13 +7,13 @@ import (
 )
 
 type Filter struct {
-	DocumentID string `json:"document_id"`
-	Email      string `json:"email"`
-	FullName   string `json:"full_name"`
-	Phone      string `json:"phone"`
-	Role       string `json:"role"`
+	DocumentID *string `json:"document_id"`
+	Email      *string `json:"email"`
+	FullName   *string `json:"full_name"`
+	Phone      *string `json:"phone"`
+	Role       *string `json:"role"`
 }
 
 type UseCase interface {
-	Execute(ctx context.Context, filter *Filter) ([]*entities.User, error)
+	Execute(ctx context.Context, filter *Filter) ([]entities.User, error)
 }

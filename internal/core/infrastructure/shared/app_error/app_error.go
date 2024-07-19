@@ -22,3 +22,8 @@ func New(code int, message string, errs ...error) *AppError {
 		Errors:  errMsgs,
 	}
 }
+
+func IsAppError(err error) bool {
+	_, ok := err.(*AppError)
+	return ok
+}

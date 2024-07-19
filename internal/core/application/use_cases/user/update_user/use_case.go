@@ -2,40 +2,35 @@ package update_user_uc
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/user_dto"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
+	doctor_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/doctor"
+	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
-	"gorm.io/gorm"
 )
 
 type useCase struct {
-	database *persistence.DbService
+	userRepository   user_repository_contract.Repository
+	doctorRepository doctor_repository_contract.Repository
 }
 
-func NewUseCase(database *persistence.DbService) update_user_contract.UseCase {
+func NewUseCase(
+	userRepository user_repository_contract.Repository,
+	doctorRepository doctor_repository_contract.Repository,
+) update_user_contract.UseCase {
 	return &useCase{
-		database: database,
+		userRepository:   userRepository,
+		doctorRepository: doctorRepository,
 	}
 }
 
 func (uc *useCase) Execute(ctx context.Context, userID uint, request *user_dto.UpdateUserRequest) (*entities.User, error) {
-	tx := uc.database.Instance.WithContext(ctx)
-
-	user := &entities.User{}
-
-	result := tx.Preload("Doctor").First(user, userID)
-
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, app_error.New(http.StatusNotFound, "user not found")
-		}
-
-		return nil, result.Error
+	user, err := uc.userRepository.GetByID(ctx, userID)
+	if err != nil {
+		return nil, err
 	}
 
 	if request.FullName != nil && user.FullName != *request.FullName {
@@ -67,42 +62,39 @@ func (uc *useCase) Execute(ctx context.Context, userID uint, request *user_dto.U
 	}
 
 	if request.Email != nil || request.DocumentID != nil {
-		existingUser := new(entities.User)
-		if err := tx.Where("(document_id = ? OR email = ?) AND id != ?", request.DocumentID, request.Email, userID).First(existingUser).Error; err != nil {
-			if !errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, err
-			}
+		var documentId, email string
+
+		if request.DocumentID != nil {
+			documentId = *request.DocumentID
+		}
+		if request.Email != nil {
+			email = *request.Email
 		}
 
-		if existingUser.ID != 0 {
+		existingUser, err := uc.userRepository.GetByDocumentIDOrEmail(ctx, documentId, email)
+		if err != nil && !app_error.IsAppError(err) {
+			return nil, err
+		}
+
+		if existingUser != nil {
 			return nil, app_error.New(http.StatusConflict, "e-mail or document id in use")
 		}
 	}
 
 	if request.DoctorMedicalID != nil {
-		existingDoctor := new(entities.Doctor)
-		if err := tx.Where("medical_id = ? AND user_id != ?", *request.DoctorMedicalID, userID).First(existingDoctor).Error; err != nil {
-			if !errors.Is(err, gorm.ErrRecordNotFound) {
-				return nil, err
-			}
+		existingDoctor, err := uc.doctorRepository.GetByMedicalID(ctx, *request.DoctorMedicalID, userID)
+		if err != nil && !app_error.IsAppError(err) {
+			return nil, err
 		}
 
-		if existingDoctor.ID != 0 {
+		if existingDoctor != nil {
 			return nil, app_error.New(http.StatusConflict, "medical id in use")
 		}
 	}
 
-	result = tx.Model(user).Save(user)
-
-	if err := result.Error; err != nil {
+	user, err = uc.userRepository.Update(ctx, user)
+	if err != nil {
 		return nil, err
-	}
-
-	if user.IsDoctor() {
-		result = tx.Model(user.Doctor).Save(user.Doctor)
-		if err := result.Error; err != nil {
-			return nil, err
-		}
 	}
 
 	return user, nil

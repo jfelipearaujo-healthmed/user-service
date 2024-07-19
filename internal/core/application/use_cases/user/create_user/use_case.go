@@ -2,38 +2,32 @@ package create_user_uc
 
 import (
 	"context"
-	"errors"
 	"net/http"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/user_dto"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
+	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	create_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
-	"gorm.io/gorm"
 )
 
 type useCase struct {
-	database *persistence.DbService
+	repository user_repository_contract.Repository
 }
 
-func NewUseCase(database *persistence.DbService) create_user_contract.UseCase {
+func NewUseCase(repository user_repository_contract.Repository) create_user_contract.UseCase {
 	return &useCase{
-		database: database,
+		repository: repository,
 	}
 }
 
 func (uc *useCase) Execute(ctx context.Context, request *user_dto.CreateUserRequest) (*entities.User, error) {
-	tx := uc.database.Instance.WithContext(ctx)
-
-	existingUser := new(entities.User)
-	if err := tx.Where("document_id = ? OR email = ?", request.DocumentID, request.Email).First(existingUser).Error; err != nil {
-		if !errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, err
-		}
+	existingUser, err := uc.repository.GetByDocumentIDOrEmail(ctx, request.DocumentID, request.Email)
+	if err != nil && !app_error.IsAppError(err) {
+		return nil, err
 	}
 
-	if existingUser.ID != 0 {
+	if existingUser != nil {
 		return nil, app_error.New(http.StatusConflict, "user already exists")
 	}
 
@@ -54,9 +48,5 @@ func (uc *useCase) Execute(ctx context.Context, request *user_dto.CreateUserRequ
 		}
 	}
 
-	if err := tx.Create(user).Error; err != nil {
-		return nil, err
-	}
-
-	return user, nil
+	return uc.repository.Create(ctx, user)
 }

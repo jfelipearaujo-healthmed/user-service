@@ -2,38 +2,22 @@ package get_user_by_id_uc
 
 import (
 	"context"
-	"errors"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
+	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
-	"gorm.io/gorm"
 )
 
 type useCase struct {
-	database *persistence.DbService
+	repository user_repository_contract.Repository
 }
 
-func NewUseCase(database *persistence.DbService) get_user_by_id_contract.UseCase {
+func NewUseCase(repository user_repository_contract.Repository) get_user_by_id_contract.UseCase {
 	return &useCase{
-		database: database,
+		repository: repository,
 	}
 }
 
 func (uc *useCase) Execute(ctx context.Context, id uint) (*entities.User, error) {
-	tx := uc.database.Instance.WithContext(ctx)
-
-	user := &entities.User{}
-
-	result := tx.Preload("Doctor").First(user, id)
-
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, nil
-		}
-
-		return nil, result.Error
-	}
-
-	return user, result.Error
+	return uc.repository.GetByID(ctx, id)
 }

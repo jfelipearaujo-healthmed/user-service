@@ -15,23 +15,23 @@ type MockUseCase struct {
 }
 
 // Execute provides a mock function with given fields: ctx, filter
-func (_m *MockUseCase) Execute(ctx context.Context, filter *Filter) ([]*entities.User, error) {
+func (_m *MockUseCase) Execute(ctx context.Context, filter *Filter) ([]entities.User, error) {
 	ret := _m.Called(ctx, filter)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Execute")
 	}
 
-	var r0 []*entities.User
+	var r0 []entities.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *Filter) ([]*entities.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *Filter) ([]entities.User, error)); ok {
 		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *Filter) []*entities.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *Filter) []entities.User); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*entities.User)
+			r0 = ret.Get(0).([]entities.User)
 		}
 	}
 
