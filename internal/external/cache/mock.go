@@ -14,6 +14,11 @@ type MockCache struct {
 	mock.Mock
 }
 
+// Close provides a mock function with given fields: ctx
+func (_m *MockCache) Close(ctx context.Context) {
+	_m.Called(ctx)
+}
+
 // Delete provides a mock function with given fields: ctx, key
 func (_m *MockCache) Delete(ctx context.Context, key string) {
 	_m.Called(ctx, key)

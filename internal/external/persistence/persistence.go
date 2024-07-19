@@ -43,7 +43,6 @@ func (db *DbService) Connect(config *config.Config) error {
 	if err := conn.AutoMigrate(
 		&entities.User{},
 		&entities.Doctor{},
-		&entities.Review{},
 	); err != nil {
 		return err
 	}

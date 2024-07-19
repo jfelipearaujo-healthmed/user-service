@@ -14,8 +14,7 @@ type User struct {
 	Phone      string `json:"phone"`
 	Role       string `json:"role"`
 
-	Doctor  *Doctor  `gorm:"foreignKey:UserID"`
-	Reviews []Review `gorm:"foreignKey:PatientID"`
+	Doctor *Doctor `gorm:"foreignKey:UserID"`
 }
 
 func (u *User) IsDoctor() bool {

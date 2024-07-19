@@ -42,27 +42,6 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           inpackage: true
           include-regex: "(Hasher)"
-    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/create_review:
-        config:
-          filename: "mock.go"
-          dir: "./internal/core/domain/use_cases/review/create_review"
-          mockname: "Mock{{.InterfaceName}}"
-          inpackage: true
-          include-regex: "(UseCase)"
-    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/get_review_by_id:
-        config:
-          filename: "mock.go"
-          dir: "./internal/core/domain/use_cases/review/get_review_by_id"
-          mockname: "Mock{{.InterfaceName}}"
-          inpackage: true
-          include-regex: "(UseCase)"
-    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/list_reviews:
-        config:
-          filename: "mock.go"
-          dir: "./internal/core/domain/use_cases/review/list_reviews"
-          mockname: "Mock{{.InterfaceName}}"
-          inpackage: true
-          include-regex: "(UseCase)"
     github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user:
         config:
           filename: "mock.go"
@@ -74,13 +53,6 @@ packages:
         config:
           filename: "mock.go"
           dir: "./internal/core/domain/repositories/doctor"
-          mockname: "Mock{{.InterfaceName}}"
-          inpackage: true
-          include-regex: "(Repository)"
-    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/review:
-        config:
-          filename: "mock.go"
-          dir: "./internal/core/domain/repositories/review"
           mockname: "Mock{{.InterfaceName}}"
           inpackage: true
           include-regex: "(Repository)"
