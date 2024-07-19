@@ -29,10 +29,17 @@ func (c *CloudConfig) IsBaseEndpointSet() bool {
 	return c.BaseEndpoint != ""
 }
 
+type CacheConfig struct {
+	Host     string `env:"HOST, required"`
+	Password string `env:"PASSWORD, required"`
+	DB       int    `env:"DB, required"`
+}
+
 type Config struct {
 	ApiConfig   *ApiConfig      `env:",prefix=API_"`
 	DbConfig    *DatabaseConfig `env:",prefix=DB_"`
 	CloudConfig *CloudConfig    `env:",prefix=AWS_"`
+	CacheConfig *CacheConfig    `env:",prefix=CACHE_"`
 }
 
 func LoadFromEnv(ctx context.Context) (*Config, error) {

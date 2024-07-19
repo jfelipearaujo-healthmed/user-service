@@ -9,9 +9,6 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
-	doctor_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/repositories/doctor"
-	review_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/repositories/review"
-	user_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/repositories/user"
 	create_review_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/create_review"
 	get_review_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/get_review_by_id"
 	list_reviews_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/list_reviews"
@@ -28,7 +25,11 @@ import (
 	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
 	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/config"
+	doctor_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/repositories/doctor"
+	review_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/repositories/review"
+	user_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/repositories/user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/hasher"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/health"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/review/create_review"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/review/get_review_by_id"
@@ -96,7 +97,9 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 		return nil, err
 	}
 
-	userRepository := user_repository.NewRepository(dbService)
+	cache := cache.NewRedisCache(ctx, config)
+
+	userRepository := user_repository.NewRepository(cache, dbService)
 	doctorRepository := doctor_repository.NewRepository(dbService)
 	reviewRepository := review_repository.NewRepository(dbService)
 
@@ -109,7 +112,7 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 
 			CreateUserUseCase:  create_user_uc.NewUseCase(userRepository),
 			GetUserByIdUseCase: get_user_by_id_uc.NewUseCase(userRepository),
-			UpdateUserUseCase:  update_user_uc.NewUseCase(userRepository, doctorRepository),
+			UpdateUserUseCase:  update_user_uc.NewUseCase(cache, userRepository, doctorRepository),
 
 			CreateReviewUseCase:  create_review_uc.NewUseCase(reviewRepository, userRepository),
 			GetReviewByIdUseCase: get_review_by_id_uc.NewUseCase(reviewRepository, userRepository),

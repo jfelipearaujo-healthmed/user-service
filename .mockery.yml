@@ -84,3 +84,10 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           inpackage: true
           include-regex: "(Repository)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/external/cache:
+        config:
+          filename: "mock.go"
+          dir: "./internal/external/cache"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(Cache)"
