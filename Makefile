@@ -4,6 +4,23 @@
 help:  ## Display this help
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m\033[0m\n"} /^[a-zA-Z_-]+:.*?##/ { printf "  \033[36m%-15s\033[0m %s\n", $$1, $$2 } /^##@/ { printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' $(MAKEFILE_LIST)
 
+install-go: ## Install Go on a specific version
+	@desiredVersion="go1.22.5"; \
+	currentVersion=$$(go version | grep -oE '[0-9]+\.[0-9]+\.[0-9]+'); \
+	echo "Current version: $$currentVersion"; \
+	if [ "$$desiredVersion" != "$$currentVersion" ]; then \
+		echo "Installing $$desiredVersion..."; \
+		sudo rm -rf /usr/local/go; \
+		wget --quiet https://go.dev/dl/$$desiredVersion.linux-amd64.tar.gz; \
+		sudo tar -C /usr/local -xzf $$desiredVersion.linux-amd64.tar.gz; \
+		rm $$desiredVersion.linux-amd64.tar.gz; \
+		export PATH=$HOME/go/bin:/usr/local/go/bin:$PATH; \
+		echo "Done!"; \
+		go version; \
+	else \
+		echo "Go $$desiredVersion is already installed. Skipping..."; \
+	fi
+
 ##@ CI/CD
 build: ## Build the application to the output folder (default: ./buil/main)
 	@echo "Building..."	
@@ -46,6 +63,22 @@ sec: ## Security checker
 			gosec ./...; \
 		else \
 			echo "You chose not to intall gosec. Exiting..."; \
+			exit 1; \
+		fi; \
+	fi
+
+scan: ## Scan the application for vulnerabilities
+	@if command -v govulncheck > /dev/null; then \
+		echo "Scanning..."; \
+		govulncheck -test -format text -show color ./...; \
+	else \
+		read -p "govulncheck is not installed on your machine. Do you want to install it? [Y/n] " choice; \
+		if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \
+			go install golang.org/x/vuln/cmd/govulncheck@latest; \
+			echo "Scanning..."; \
+			govulncheck -test -format text -show color ./...; \
+		else \
+			echo "You chose not to intall govulncheck. Exiting..."; \
 			exit 1; \
 		fi; \
 	fi
@@ -330,5 +363,4 @@ gen-scaffold-bdd: ## Gen BDD scaffold using godog
 			exit 1; \
 		fi; \
 	fi
-
 .PHONY: build run test clean

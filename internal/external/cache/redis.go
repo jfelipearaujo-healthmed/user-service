@@ -20,7 +20,9 @@ func NewRedisCache(ctx context.Context, config *config.Config) Cache {
 	if config.ApiConfig.IsDevelopment() {
 		tlsConfig = nil
 	} else {
-		tlsConfig = &tls.Config{}
+		tlsConfig = &tls.Config{
+			MinVersion: tls.VersionTLS12,
+		}
 	}
 
 	client := &redisCache{
