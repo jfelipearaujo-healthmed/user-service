@@ -1,6 +1,7 @@
 package persistence
 
 import (
+	"context"
 	"log/slog"
 	"time"
 
@@ -21,7 +22,7 @@ func NewDbService() *DbService {
 	return &DbService{}
 }
 
-func (db *DbService) Connect(config *config.Config) error {
+func (svc *DbService) Connect(config *config.Config) error {
 	log := slog.Default()
 
 	gormLogger := slogGorm.New(
@@ -47,7 +48,26 @@ func (db *DbService) Connect(config *config.Config) error {
 		return err
 	}
 
-	db.Instance = conn
+	svc.Instance = conn
+
+	return nil
+}
+
+func (svc *DbService) Close(ctx context.Context) error {
+	slog.InfoContext(ctx, "closing database connection")
+
+	db, err := svc.Instance.DB()
+	if err != nil {
+		slog.ErrorContext(ctx, "error closing database connection", "error", err)
+		return err
+	}
+
+	if err := db.Close(); err != nil {
+		slog.ErrorContext(ctx, "error closing database connection", "error", err)
+		return err
+	}
+
+	slog.InfoContext(ctx, "database connection closed")
 
 	return nil
 }

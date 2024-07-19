@@ -27,7 +27,7 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 # Copy the binary to the production image from the builder stage
 COPY --from=builder /app/api /app/api
 
-EXPOSE 8080
+EXPOSE 5000
 
 # Run the api on container startup
 CMD ["/app/api"]

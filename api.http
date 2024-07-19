@@ -1,5 +1,5 @@
 @host=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjUsImV4cCI6MTcyMTM1ODU5N30.I2BrKRmQ53M5ta9ErhsuU1o3n-5s3joGsUqC9dlFaUY
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjUsImV4cCI6MTcyOTM4ODU5N30.4uP_U8pzGuFK8vHkIDVwg0g11T5RKoKPSkBFd1XJPz4
 
 ### Health Check
 GET {{host}}/health

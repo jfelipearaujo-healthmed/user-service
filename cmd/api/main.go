@@ -7,6 +7,8 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sync"
+	"syscall"
 	"time"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/config"
@@ -24,7 +26,7 @@ func init() {
 }
 
 func main() {
-	ctx := context.Background()
+	ctx, cancel := context.WithCancel(context.Background())
 
 	if err := godotenv.Load(); err != nil {
 		slog.ErrorContext(ctx, "error loading .env file on root folder", "error", err)
@@ -49,6 +51,24 @@ func main() {
 		panic(err)
 	}
 
+	var wg sync.WaitGroup
+	wg.Add(1)
+	go startHttpServer(ctx, &wg, server)
+
+	signalCh := make(chan os.Signal, 1)
+	signal.Notify(signalCh, syscall.SIGINT, syscall.SIGTERM)
+
+	<-signalCh
+
+	cancel()
+	wg.Wait()
+
+	slog.InfoContext(ctx, "graceful shutdown completed ✅")
+}
+
+func startHttpServer(ctx context.Context, wg *sync.WaitGroup, server *server.Server) {
+	defer wg.Done()
+
 	httpServer := server.GetServer()
 
 	go func() {
@@ -60,15 +80,20 @@ func main() {
 		slog.InfoContext(ctx, "http server stopped serving requests")
 	}()
 
-	sc := make(chan os.Signal, 1)
-	signal.Notify(sc, os.Interrupt)
-	<-sc
+	<-ctx.Done()
 
-	ctx, shutdown := context.WithTimeout(ctx, 10*time.Second)
+	shutdownCtx, shutdown := context.WithTimeout(context.Background(), 10*time.Second)
 	defer shutdown()
 
-	if err := httpServer.Shutdown(ctx); err != nil {
+	if err := httpServer.Shutdown(shutdownCtx); err != nil {
 		slog.ErrorContext(ctx, "error while trying to shutdown the server", "error", err)
 	}
-	slog.InfoContext(ctx, "graceful shutdown completed ✅")
+
+	if err := server.DbService.Close(ctx); err != nil {
+		slog.ErrorContext(ctx, "error while trying to close the database connection", "error", err)
+	}
+
+	if err := server.Cache.Close(ctx); err != nil {
+		slog.ErrorContext(ctx, "error while trying to close the cache connection", "error", err)
+	}
 }
