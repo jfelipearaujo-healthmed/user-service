@@ -67,8 +67,15 @@ func (c *redisCache) Delete(ctx context.Context, key string) {
 	slog.DebugContext(ctx, "cache delete", "key", key)
 }
 
-func (c *redisCache) Close(ctx context.Context) {
+func (c *redisCache) Close(ctx context.Context) error {
+	slog.InfoContext(ctx, "closing redis client")
+
 	if err := c.client.Close(); err != nil {
 		slog.ErrorContext(ctx, "error closing redis client", "err", err)
+		return err
 	}
+
+	slog.InfoContext(ctx, "redis client closed")
+
+	return nil
 }

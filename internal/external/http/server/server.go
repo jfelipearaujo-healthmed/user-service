@@ -35,6 +35,7 @@ import (
 )
 
 type Dependencies struct {
+	Cache     cache.Cache
 	DbService *persistence.DbService
 
 	Hasher hasher.Hasher
@@ -72,7 +73,14 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 		return nil, err
 	}
 
+	cacheUrl, err := secretService.GetSecret(ctx, config.CacheConfig.HostSecretName)
+	if err != nil {
+		slog.ErrorContext(ctx, "error getting secret", "secret_name", config.CacheConfig.HostSecretName, "error", err)
+		return nil, err
+	}
+
 	config.DbConfig.Url = dbUrl
+	config.CacheConfig.Host = cacheUrl
 
 	dbService := persistence.NewDbService()
 
@@ -89,6 +97,7 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 	return &Server{
 		Config: config,
 		Dependencies: Dependencies{
+			Cache:     cache,
 			DbService: dbService,
 
 			Hasher: hasher.NewHasher(),

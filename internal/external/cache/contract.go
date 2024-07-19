@@ -10,7 +10,7 @@ type Cache interface {
 	Get(ctx context.Context, key string) (string, bool)
 	Set(ctx context.Context, key string, value string, ttl time.Duration)
 	Delete(ctx context.Context, key string)
-	Close(ctx context.Context)
+	Close(ctx context.Context) error
 }
 
 func WithCache[T any](ctx context.Context, cache Cache, key string, ttl time.Duration, exec func() (*T, error)) (*T, error) {

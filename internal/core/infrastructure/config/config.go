@@ -7,7 +7,7 @@ import (
 )
 
 type ApiConfig struct {
-	Port       int    `env:"PORT, default=8080"`
+	Port       int    `env:"PORT, default=5000"`
 	EnvName    string `env:"ENV_NAME, default=development"`
 	ApiVersion string `env:"VERSION, default=v1"`
 }
@@ -30,9 +30,10 @@ func (c *CloudConfig) IsBaseEndpointSet() bool {
 }
 
 type CacheConfig struct {
-	Host     string `env:"HOST, required"`
-	Password string `env:"PASSWORD, required"`
-	DB       int    `env:"DB, required"`
+	Host           string `env:"HOST, required"`
+	HostSecretName string `env:"HOST_SECRET_NAME, required"`
+	Password       string `env:"PASSWORD"`
+	DB             int    `env:"DB, default=0"`
 }
 
 type Config struct {

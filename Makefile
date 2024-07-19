@@ -97,7 +97,6 @@ k8s-deploy: ## Deploy the application to Kubernetes
 		kubectl apply -f k8s/namespace.yaml; \
 		kubectl apply -f k8s/configmap.yaml; \
 		kubectl apply -f k8s/service-account-sensitive.yaml; \
-		kubectl apply -f k8s/secret.yaml; \
 		kubectl apply -f k8s/deployment.yaml; \
 		kubectl apply -f k8s/service.yaml; \
 		kubectl apply -f k8s/hpa.yaml; \
@@ -113,7 +112,6 @@ k8s-deploy: ## Deploy the application to Kubernetes
 			kubectl apply -f k8s/namespace.yaml; \
 			kubectl apply -f k8s/configmap.yaml; \
 			kubectl apply -f k8s/service-account-sensitive.yaml; \
-			kubectl apply -f k8s/secret.yaml; \
 			kubectl apply -f k8s/deployment.yaml; \
 			kubectl apply -f k8s/service.yaml; \
 			kubectl apply -f k8s/hpa.yaml; \
@@ -133,7 +131,6 @@ k8s-destroy: ## Destroy the application from Kubernetes
 		kubectl delete -f k8s/hpa.yaml; \
 		kubectl delete -f k8s/service.yaml; \
 		kubectl delete -f k8s/deployment.yaml; \
-		kubectl delete -f k8s/secret.yaml; \
 		kubectl delete -f k8s/service-account-sensitive.yaml; \
 		kubectl delete -f k8s/configmap.yaml; \
 		kubectl delete -f k8s/namespace.yaml; \
@@ -149,7 +146,6 @@ k8s-destroy: ## Destroy the application from Kubernetes
 			kubectl delete -f k8s/hpa.yaml; \
 			kubectl delete -f k8s/service.yaml; \
 			kubectl delete -f k8s/deployment.yaml; \
-			kubectl delete -f k8s/secret.yaml; \
 			kubectl delete -f k8s/service-account-sensitive.yaml; \
 			kubectl delete -f k8s/configmap.yaml; \
 			kubectl delete -f k8s/namespace.yaml; \
