@@ -2,7 +2,9 @@ package update_user_uc
 
 import (
 	"context"
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/dtos/user_dto"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
@@ -10,18 +12,27 @@ import (
 	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
+)
+
+const (
+	cacheKey string        = "user:%d"
+	ttl      time.Duration = time.Hour * 24
 )
 
 type useCase struct {
+	cache            cache.Cache
 	userRepository   user_repository_contract.Repository
 	doctorRepository doctor_repository_contract.Repository
 }
 
 func NewUseCase(
+	cache cache.Cache,
 	userRepository user_repository_contract.Repository,
 	doctorRepository doctor_repository_contract.Repository,
 ) update_user_contract.UseCase {
 	return &useCase{
+		cache:            cache,
 		userRepository:   userRepository,
 		doctorRepository: doctorRepository,
 	}
@@ -97,5 +108,5 @@ func (uc *useCase) Execute(ctx context.Context, userID uint, request *user_dto.U
 		return nil, err
 	}
 
-	return user, nil
+	return cache.WithRefreshCache(ctx, uc.cache, fmt.Sprintf(cacheKey, user.ID), ttl, user)
 }

@@ -5,40 +5,51 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
 	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/fields"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"gorm.io/gorm"
 )
 
+const (
+	cacheKey string        = "user:%d"
+	ttl      time.Duration = time.Hour * 24
+)
+
 type repository struct {
+	cache     cache.Cache
 	dbService *persistence.DbService
 }
 
-func NewRepository(dbService *persistence.DbService) user_repository_contract.Repository {
+func NewRepository(cache cache.Cache, dbService *persistence.DbService) user_repository_contract.Repository {
 	return &repository{
+		cache:     cache,
 		dbService: dbService,
 	}
 }
 
 func (rp *repository) GetByID(ctx context.Context, id uint) (*entities.User, error) {
-	tx := rp.dbService.Instance.WithContext(ctx)
+	return cache.WithCache(ctx, rp.cache, fmt.Sprintf(cacheKey, id), ttl, func() (*entities.User, error) {
+		tx := rp.dbService.Instance.WithContext(ctx)
 
-	user := new(entities.User)
-	result := tx.Preload("Doctor").First(user, id)
+		user := new(entities.User)
+		result := tx.Preload("Doctor").First(user, id)
 
-	if result.Error != nil {
-		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-			return nil, app_error.New(http.StatusNotFound, fmt.Sprintf("user with id %d not found", id))
+		if result.Error != nil {
+			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+				return nil, app_error.New(http.StatusNotFound, fmt.Sprintf("user with id %d not found", id))
+			}
+
+			return nil, result.Error
 		}
 
-		return nil, result.Error
-	}
-
-	return user, result.Error
+		return user, result.Error
+	})
 }
 
 func (rp *repository) GetByEmail(ctx context.Context, email string) (*entities.User, error) {
