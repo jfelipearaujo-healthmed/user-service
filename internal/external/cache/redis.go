@@ -15,11 +15,9 @@ type redisCache struct {
 }
 
 func NewRedisCache(ctx context.Context, config *config.Config) Cache {
-	tlsConfig := new(tls.Config)
+	var tlsConfig *tls.Config
 
-	if config.ApiConfig.IsDevelopment() {
-		tlsConfig = nil
-	} else {
+	if !config.ApiConfig.IsDevelopment() {
 		tlsConfig = &tls.Config{
 			MinVersion: tls.VersionTLS12,
 		}
