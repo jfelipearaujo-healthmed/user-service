@@ -9,12 +9,18 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	doctor_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/repositories/doctor"
+	review_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/repositories/review"
+	user_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/repositories/user"
 	create_review_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/create_review"
 	get_review_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/get_review_by_id"
 	list_reviews_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/review/list_reviews"
 	create_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/create_user"
 	get_user_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/get_user_by_id"
 	update_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/update_user"
+	doctor_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/doctor"
+	review_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/review"
+	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	create_review_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/create_review"
 	get_review_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/get_review_by_id"
 	list_reviews_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/review/list_reviews"
@@ -42,6 +48,10 @@ type Dependencies struct {
 	DbService *persistence.DbService
 
 	Hasher hasher.Hasher
+
+	UserRepository   user_repository_contract.Repository
+	DoctorRepository doctor_repository_contract.Repository
+	ReviewRepository review_repository_contract.Repository
 
 	CreateUserUseCase  create_user_contract.UseCase
 	GetUserByIdUseCase get_user_by_id_contract.UseCase
@@ -86,6 +96,10 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 		return nil, err
 	}
 
+	userRepository := user_repository.NewRepository(dbService)
+	doctorRepository := doctor_repository.NewRepository(dbService)
+	reviewRepository := review_repository.NewRepository(dbService)
+
 	return &Server{
 		Config: config,
 		Dependencies: Dependencies{
@@ -93,13 +107,13 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 
 			Hasher: hasher.NewHasher(),
 
-			CreateUserUseCase:  create_user_uc.NewUseCase(dbService),
-			GetUserByIdUseCase: get_user_by_id_uc.NewUseCase(dbService),
-			UpdateUserUseCase:  update_user_uc.NewUseCase(dbService),
+			CreateUserUseCase:  create_user_uc.NewUseCase(userRepository),
+			GetUserByIdUseCase: get_user_by_id_uc.NewUseCase(userRepository),
+			UpdateUserUseCase:  update_user_uc.NewUseCase(userRepository, doctorRepository),
 
-			CreateReviewUseCase:  create_review_uc.NewUseCase(dbService),
-			GetReviewByIdUseCase: get_review_by_id_uc.NewUseCase(dbService),
-			ListReviewsUseCase:   list_reviews_uc.NewUseCase(dbService),
+			CreateReviewUseCase:  create_review_uc.NewUseCase(reviewRepository, userRepository),
+			GetReviewByIdUseCase: get_review_by_id_uc.NewUseCase(reviewRepository, userRepository),
+			ListReviewsUseCase:   list_reviews_uc.NewUseCase(reviewRepository, userRepository),
 		},
 	}, nil
 }

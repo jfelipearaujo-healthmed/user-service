@@ -63,3 +63,24 @@ packages:
           mockname: "Mock{{.InterfaceName}}"
           inpackage: true
           include-regex: "(UseCase)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/repositories/user"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(Repository)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/doctor:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/repositories/doctor"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(Repository)"
+    github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/review:
+        config:
+          filename: "mock.go"
+          dir: "./internal/core/domain/repositories/review"
+          mockname: "Mock{{.InterfaceName}}"
+          inpackage: true
+          include-regex: "(Repository)"
