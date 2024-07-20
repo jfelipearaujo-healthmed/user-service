@@ -27,17 +27,23 @@ func Middleware() echo.MiddlewareFunc {
 				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
 			}
 
-			userId, ok := claims["iss"].(float64)
-			if !ok {
-				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
-			}
-
 			expiration := claims["exp"].(float64)
 			if expiration < float64(time.Now().Unix()) {
 				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
 			}
 
+			userId, ok := claims["iss"].(float64)
+			if !ok {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
+			}
+
+			role, ok := claims["role"].(string)
+			if !ok {
+				return echo.NewHTTPError(http.StatusUnauthorized, "Invalid token")
+			}
+
 			c.Set("userId", uint(userId))
+			c.Set("role", role)
 
 			return next(c)
 		}
