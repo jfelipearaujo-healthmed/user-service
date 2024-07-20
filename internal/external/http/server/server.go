@@ -27,6 +27,7 @@ import (
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/get_user_by_id"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/logger"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/role"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/token"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/secret"
@@ -130,6 +131,7 @@ func (s *Server) RegisterRoutes() http.Handler {
 	nonAuthenticated := e.Group(fmt.Sprintf("/api/%s", s.Config.ApiConfig.ApiVersion))
 
 	authenticated.Use(token.Middleware())
+	authenticated.Use(role.Middleware(role.Any))
 
 	s.addUserAuthRoutes(nonAuthenticated)
 	s.addUserRoutes(authenticated)
