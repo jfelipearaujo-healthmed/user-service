@@ -43,11 +43,11 @@ Legend:
 - 💤: Not started
 
 
-| Completed | Method | Endpoint    | Description          | User Role |
-| --------- | ------ | ----------- | -------------------- | --------- |
-| ✅         | POST   | `/users`    | Create a user        | Any       |
-| ✅         | GET    | `/users/me` | Get the current user | Any       |
-| ✅         | PUT    | `/users/me` | Update a user        | Any       |
+| Completed | Method | Endpoint    | Description          | User Role      |
+| --------- | ------ | ----------- | -------------------- | -------------- |
+| ✅         | POST   | `/users`    | Create a user        | Doctor/Patient |
+| ✅         | GET    | `/users/me` | Get the current user | Doctor/Patient |
+| ✅         | PUT    | `/users/me` | Update a user        | Doctor/Patient |
 
 # License
 
