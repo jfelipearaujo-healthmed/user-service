@@ -1,4 +1,4 @@
-package list_users_contract
+package list_doctors_contract
 
 import (
 	"context"
@@ -7,11 +7,10 @@ import (
 )
 
 type Filter struct {
-	DocumentID *string `json:"document_id"`
-	Email      *string `json:"email"`
-	FullName   *string `json:"full_name"`
-	Phone      *string `json:"phone"`
-	Role       *string `json:"role"`
+	FullName  *string  `json:"full_name"`
+	MedicalID *string  `json:"medical_id"`
+	Specialty *string  `json:"specialty"`
+	AvgRating *float64 `json:"avg_rating"`
 }
 
 type UseCase interface {

@@ -1,5 +1,5 @@
 @host=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjUsImV4cCI6MTcyOTM4ODU5N30.4uP_U8pzGuFK8vHkIDVwg0g11T5RKoKPSkBFd1XJPz4
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjUsInJvbGUiOiJwYXRpZW50IiwiZXhwIjoxNzI5Mzg4NTk3fQ.M1mbgSMeotwIoavZUjeRO40-Y0XKVgQnpn7I8A8vo3Y
 
 ### Health Check
 GET {{host}}/health
@@ -10,15 +10,15 @@ POST {{host}}/api/v1/users
 Content-Type: application/json
 
 {
-    "full_name": "John Doe Jr",
-    "email": "john_jr@doe.com",
+    "full_name": "Someone",
+    "email": "someone@email.com",
     "password": "12345678",
-    "document_id": "83343169099",
+    "document_id": "65839462039",
     "phone": "1234567890",
     "role": "doctor",
-    "medical_id": "1234561-SP",
-    "specialty": "Cardiologist",
-    "price": 100
+    "medical_id": "223344-SP",
+    "specialty": "Psicologist",
+    "price": 120
 }
 
 ### Create a User (patient)
@@ -57,3 +57,13 @@ Authorization: Bearer {{token}}
 {
     "email": "john@email.com"
 }
+
+### List Doctors
+GET {{host}}/api/v1/users/doctors?medical_id=SP&specialty=Psicologist
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+### Get Doctor by ID
+GET {{host}}/api/v1/users/doctors/3
+Content-Type: application/json
+Authorization: Bearer {{token}}

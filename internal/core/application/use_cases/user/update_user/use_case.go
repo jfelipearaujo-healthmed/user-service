@@ -13,6 +13,7 @@ import (
 	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/role"
 )
 
 const (
@@ -39,7 +40,7 @@ func NewUseCase(
 }
 
 func (uc *useCase) Execute(ctx context.Context, userID uint, request *user_dto.UpdateUserRequest) (*entities.User, error) {
-	user, err := uc.userRepository.GetByID(ctx, userID)
+	user, err := uc.userRepository.GetByID(ctx, userID, role.Any)
 	if err != nil {
 		return nil, err
 	}

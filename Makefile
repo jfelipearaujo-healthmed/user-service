@@ -51,6 +51,10 @@ clean: ## Clean the binary
 	@echo "Cleaning..."
 	@rm -f build/main
 
+check: ## Check the code
+	@echo "Checking..."
+	@make lint && make sec && make scan
+
 sec: ## Security checker
 	@if command -v gosec > /dev/null; then \
 		echo "Analyzing..."; \

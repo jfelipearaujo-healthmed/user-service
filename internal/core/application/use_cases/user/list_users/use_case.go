@@ -19,23 +19,20 @@ func NewUseCase(repository user_repository_contract.Repository) list_users_contr
 }
 
 func (uc *useCase) Execute(ctx context.Context, filter *list_users_contract.Filter) ([]entities.User, error) {
-	repoFilter := &user_repository_contract.ListUsersFilter{}
-
-	if filter.DocumentID != nil {
-		repoFilter.DocumentID = *filter.DocumentID
-	}
-	if filter.Email != nil {
-		repoFilter.Email = *filter.Email
-	}
-	if filter.FullName != nil {
-		repoFilter.FullName = *filter.FullName
-	}
-	if filter.Phone != nil {
-		repoFilter.Phone = *filter.Phone
-	}
-	if filter.Role != nil {
-		repoFilter.Role = *filter.Role
-	}
+	repoFilter := ToRepositoryFilter(filter)
 
 	return uc.repository.List(ctx, repoFilter)
+}
+
+func ToRepositoryFilter(filter *list_users_contract.Filter) *user_repository_contract.ListFilter {
+	return &user_repository_contract.ListFilter{
+		DocumentID: filter.DocumentID,
+		Email:      filter.Email,
+		FullName:   filter.FullName,
+		Phone:      filter.Phone,
+		MedicalID:  filter.MedicalID,
+		Specialty:  filter.Specialty,
+		AvgRating:  filter.AvgRating,
+		Role:       filter.RoleFilter,
+	}
 }

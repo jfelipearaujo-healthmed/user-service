@@ -11,12 +11,8 @@ import (
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
 	create_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/create_user"
 	get_user_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/get_user_by_id"
+	list_users_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/list_users"
 	update_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/update_user"
-	doctor_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/doctor"
-	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
-	create_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
-	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
-	update_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/config"
 	doctor_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/repositories/doctor"
 	user_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/repositories/user"
@@ -24,7 +20,9 @@ import (
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/health"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/create_user"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/get_doctor_by_id"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/get_user_by_id"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/list_users"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/update_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/logger"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/role"
@@ -34,20 +32,6 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 )
-
-type Dependencies struct {
-	Cache     cache.Cache
-	DbService *persistence.DbService
-
-	Hasher hasher.Hasher
-
-	UserRepository   user_repository_contract.Repository
-	DoctorRepository doctor_repository_contract.Repository
-
-	CreateUserUseCase  create_user_contract.UseCase
-	GetUserByIdUseCase get_user_by_id_contract.UseCase
-	UpdateUserUseCase  update_user_contract.UseCase
-}
 
 type Server struct {
 	Config *config.Config
@@ -106,6 +90,7 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 			CreateUserUseCase:  create_user_uc.NewUseCase(userRepository),
 			GetUserByIdUseCase: get_user_by_id_uc.NewUseCase(userRepository),
 			UpdateUserUseCase:  update_user_uc.NewUseCase(cache, userRepository, doctorRepository),
+			ListUsersUseCase:   list_users_uc.NewUseCase(userRepository),
 		},
 	}, nil
 }
@@ -127,14 +112,9 @@ func (s *Server) RegisterRoutes() http.Handler {
 
 	s.addHealthCheckRoutes(e)
 
-	authenticated := e.Group(fmt.Sprintf("/api/%s", s.Config.ApiConfig.ApiVersion))
-	nonAuthenticated := e.Group(fmt.Sprintf("/api/%s", s.Config.ApiConfig.ApiVersion))
+	api := e.Group(fmt.Sprintf("/api/%s", s.Config.ApiConfig.ApiVersion))
 
-	authenticated.Use(token.Middleware())
-	authenticated.Use(role.Middleware(role.Any))
-
-	s.addUserAuthRoutes(nonAuthenticated)
-	s.addUserRoutes(authenticated)
+	s.addUserRoutes(api)
 
 	return e
 }
@@ -145,16 +125,26 @@ func (server *Server) addHealthCheckRoutes(e *echo.Echo) {
 	e.GET("/health", healthHandler.Handle)
 }
 
-func (server *Server) addUserAuthRoutes(g *echo.Group) {
+func (server *Server) addUserRoutes(g *echo.Group) {
 	userHandler := create_user.NewHandler(server.CreateUserUseCase, server.Hasher)
+	getUserByIdHandler := get_user_by_id.NewHandler(server.GetUserByIdUseCase)
+	getDoctorByIdHandler := get_doctor_by_id.NewHandler(server.GetUserByIdUseCase)
+	updateUserHandler := update_user.NewHandler(server.UpdateUserUseCase)
+	listUsersHandler := list_users.NewHandler(server.ListUsersUseCase)
 
 	g.POST("/users", userHandler.Handle)
-}
-
-func (server *Server) addUserRoutes(g *echo.Group) {
-	getUserByIdHandler := get_user_by_id.NewHandler(server.GetUserByIdUseCase)
-	updateUserHandler := update_user.NewHandler(server.UpdateUserUseCase)
-
-	g.GET("/users/me", getUserByIdHandler.Handle)
-	g.PUT("/users/me", updateUserHandler.Handle)
+	g.GET("/users/me", getUserByIdHandler.Handle,
+		token.Middleware(),
+		role.MiddlewareAllowRole(role.Any))
+	g.PUT("/users/me", updateUserHandler.Handle,
+		token.Middleware(),
+		role.MiddlewareAllowRole(role.Any))
+	g.GET("/users/doctors", listUsersHandler.Handle,
+		token.Middleware(),
+		role.MiddlewareAllowRole(role.Patient),
+		role.MiddlewareFilterRole(role.Doctor))
+	g.GET("/users/doctors/:doctorId", getDoctorByIdHandler.Handle,
+		token.Middleware(),
+		role.MiddlewareAllowRole(role.Patient),
+		role.MiddlewareFilterRole(role.Doctor))
 }
