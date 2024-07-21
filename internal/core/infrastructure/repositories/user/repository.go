@@ -10,8 +10,8 @@ import (
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/entities"
 	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/app_error"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/fields"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/role"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/persistence"
 	"gorm.io/gorm"
 )
@@ -33,16 +33,23 @@ func NewRepository(cache cache.Cache, dbService *persistence.DbService) user_rep
 	}
 }
 
-func (rp *repository) GetByID(ctx context.Context, id uint) (*entities.User, error) {
-	return cache.WithCache(ctx, rp.cache, fmt.Sprintf(cacheKey, id), ttl, func() (*entities.User, error) {
+func (rp *repository) GetByID(ctx context.Context, userID uint, roleFilter role.Role) (*entities.User, error) {
+	return cache.WithCache(ctx, rp.cache, fmt.Sprintf(cacheKey, userID), ttl, func() (*entities.User, error) {
 		tx := rp.dbService.Instance.WithContext(ctx)
 
 		user := new(entities.User)
-		result := tx.Preload("Doctor").First(user, id)
+
+		query := tx.Preload("Doctor")
+
+		if roleFilter != role.Any {
+			query = query.Where("users.role = ?", roleFilter)
+		}
+
+		result := query.First(user, userID)
 
 		if result.Error != nil {
 			if errors.Is(result.Error, gorm.ErrRecordNotFound) {
-				return nil, app_error.New(http.StatusNotFound, fmt.Sprintf("user with id %d not found", id))
+				return nil, app_error.New(http.StatusNotFound, fmt.Sprintf("user with id %d not found", userID))
 			}
 
 			return nil, result.Error
@@ -103,17 +110,41 @@ func (rp *repository) GetByDocumentIDOrEmail(ctx context.Context, documentID str
 	return user, nil
 }
 
-func (rp *repository) List(ctx context.Context, filter *user_repository_contract.ListUsersFilter) ([]entities.User, error) {
+func (rp *repository) List(ctx context.Context, filter *user_repository_contract.ListFilter) ([]entities.User, error) {
 	tx := rp.dbService.Instance.WithContext(ctx)
 
 	users := new([]entities.User)
 
-	fields := fields.GetNonEmptyFields(filter, &fields.ANY_CHAR, &fields.ANY_CHAR)
+	query := tx.Preload("Doctor")
 
-	query := tx
+	query = query.Where("users.deleted_at IS NULL AND users.role = ?", filter.Role)
 
-	for field, value := range fields {
-		query = query.Where(fmt.Sprintf("%s LIKE ?", field), value)
+	if filter.DocumentID != nil {
+		query = query.Where("users.document_id LIKE ?", fmt.Sprintf("%%%s%%", *filter.DocumentID))
+	}
+	if filter.Email != nil {
+		query = query.Where("users.email LIKE ?", fmt.Sprintf("%%%s%%", *filter.Email))
+	}
+	if filter.FullName != nil {
+		query = query.Where("users.full_name LIKE ?", fmt.Sprintf("%%%s%%", *filter.FullName))
+	}
+	if filter.Phone != nil {
+		query = query.Where("users.phone LIKE ?", fmt.Sprintf("%%%s%%", *filter.Phone))
+	}
+
+	// check for doctor fields
+	if filter.MedicalID != nil || filter.Specialty != nil || filter.AvgRating != nil {
+		query = query.Joins("JOIN doctors ON doctors.user_id = users.id AND doctors.deleted_at IS NULL")
+
+		if filter.MedicalID != nil {
+			query = query.Where("doctors.medical_id LIKE ?", fmt.Sprintf("%%%s%%", *filter.MedicalID))
+		}
+		if filter.Specialty != nil {
+			query = query.Where("doctors.specialty LIKE ?", fmt.Sprintf("%%%s%%", *filter.Specialty))
+		}
+		if filter.AvgRating != nil {
+			query = query.Where("doctors.avg_rating >= ?", *filter.AvgRating)
+		}
 	}
 
 	if err := query.Find(&users).Error; err != nil {

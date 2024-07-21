@@ -183,7 +183,7 @@ func (_m *MockRepository) GetByID(ctx context.Context, id uint) (*entities.User,
 }
 
 // List provides a mock function with given fields: ctx, filter
-func (_m *MockRepository) List(ctx context.Context, filter *ListUsersFilter) ([]entities.User, error) {
+func (_m *MockRepository) List(ctx context.Context, filter *ListFilter) ([]entities.User, error) {
 	ret := _m.Called(ctx, filter)
 
 	if len(ret) == 0 {
@@ -192,10 +192,10 @@ func (_m *MockRepository) List(ctx context.Context, filter *ListUsersFilter) ([]
 
 	var r0 []entities.User
 	var r1 error
-	if rf, ok := ret.Get(0).(func(context.Context, *ListUsersFilter) ([]entities.User, error)); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ListFilter) ([]entities.User, error)); ok {
 		return rf(ctx, filter)
 	}
-	if rf, ok := ret.Get(0).(func(context.Context, *ListUsersFilter) []entities.User); ok {
+	if rf, ok := ret.Get(0).(func(context.Context, *ListFilter) []entities.User); ok {
 		r0 = rf(ctx, filter)
 	} else {
 		if ret.Get(0) != nil {
@@ -203,7 +203,7 @@ func (_m *MockRepository) List(ctx context.Context, filter *ListUsersFilter) ([]
 		}
 	}
 
-	if rf, ok := ret.Get(1).(func(context.Context, *ListUsersFilter) error); ok {
+	if rf, ok := ret.Get(1).(func(context.Context, *ListFilter) error); ok {
 		r1 = rf(ctx, filter)
 	} else {
 		r1 = ret.Error(1)

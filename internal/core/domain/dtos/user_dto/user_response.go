@@ -49,3 +49,13 @@ func MapFromDomain(user *entities.User) *UserResponse {
 
 	return res
 }
+
+func MapFromSlice(users []entities.User) []*UserResponse {
+	res := make([]*UserResponse, len(users))
+
+	for i := range users {
+		res[i] = MapFromDomain(&users[i])
+	}
+
+	return res
+}
