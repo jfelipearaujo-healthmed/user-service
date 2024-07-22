@@ -51,6 +51,17 @@ Legend:
 | ✅         | GET    | `/users/doctors`            | Get doctors by Medical ID, specialty, etc | Patient        |
 | ✅         | GET    | `/users/doctors/{doctorId}` | Get doctor by ID                          | Patient        |
 
+
+# Diagrams
+
+## User Handling
+
+In this diagram, we can see all the possible interactions between the user and the service.
+
+Attention: The user could be a doctor or a patient.
+
+![user_handling](./docs/user_creation.svg)
+
 # License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
