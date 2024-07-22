@@ -1,0 +1,95 @@
+@startuml user_creation
+
+title User Handling
+
+actor "User" as user
+participant "User Service" as user_service
+participant "Database" as database
+
+== Creating an user ==
+
+note over user
+In this example, the user could be
+a **doctor** or a **patient**.
+end note
+
+user -> user_service: POST /users
+
+note over user_service
+This route does **not**
+require authentication
+end note
+
+activate user_service
+user_service -> user_service: Validate user
+user_service -> database: Create user
+database --> user_service: Created
+user_service --> user: 201 Created
+deactivate user_service
+
+== Getting an user ==
+
+note over user
+In this example, the user could be
+a **doctor** or a **patient**.
+end note
+
+user -> user_service: GET /users/me\n(Bearer JWT)
+activate user_service
+user_service -> user_service: Get user based on JWT
+user_service -> database: Get user
+database --> user_service: Found
+user_service --> user: 200 OK
+deactivate user_service
+
+== Updating an user ==
+
+note over user
+In this example, the user could be
+a **doctor** or a **patient**.
+end note
+
+user -> user_service: PUT /users/me\n(Bearer JWT)
+activate user_service
+user_service -> user_service: Get user based on JWT
+user_service -> user_service: Validate new information
+user_service -> database: Update user
+database --> user_service: Updated
+user_service --> user: 200 OK
+deactivate user_service
+
+== Getting the doctors ==
+
+note over user
+In this example, the user could be
+only a **patient**.
+end note
+
+user -> user_service: GET /users/doctors\n(Bearer JWT)
+activate user_service
+user_service -> database: Get doctors
+
+note over database
+This query could be filtered by
+specialty, medical ID, etc.
+end note
+
+database --> user_service: Found
+user_service --> user: 200 OK
+deactivate user_service
+
+== Getting a doctor by ID ==
+
+note over user
+In this example, the user could be
+only a **patient**.
+end note
+
+user -> user_service: GET /users/doctors/{doctorId}\n(Bearer JWT)
+activate user_service
+user_service -> database: Get doctor by ID
+database --> user_service: Found
+user_service --> user: 200 OK
+deactivate user_service
+
+@enduml
