@@ -39,7 +39,7 @@ func (rp *repository) GetByID(ctx context.Context, userID uint, roleFilter role.
 
 		user := new(entities.User)
 
-		query := tx.Preload("Doctor")
+		query := tx.Preload("Doctor").Preload("Addresses")
 
 		if roleFilter != role.Any {
 			query = query.Where("users.role = ?", roleFilter)
@@ -63,7 +63,7 @@ func (rp *repository) GetByEmail(ctx context.Context, email string) (*entities.U
 	tx := rp.dbService.Instance.WithContext(ctx)
 
 	user := new(entities.User)
-	result := tx.Preload("Doctor").Where("email = ?", email).First(user)
+	result := tx.Preload("Doctor").Preload("Addresses").Where("email = ?", email).First(user)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -80,7 +80,7 @@ func (rp *repository) GetByDocumentID(ctx context.Context, documentID string) (*
 	tx := rp.dbService.Instance.WithContext(ctx)
 
 	user := new(entities.User)
-	result := tx.Preload("Doctor").Where("document_id = ?", documentID).First(user)
+	result := tx.Preload("Doctor").Preload("Addresses").Where("document_id = ?", documentID).First(user)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -97,7 +97,7 @@ func (rp *repository) GetByDocumentIDOrEmail(ctx context.Context, documentID str
 	tx := rp.dbService.Instance.WithContext(ctx)
 
 	user := new(entities.User)
-	result := tx.Preload("Doctor").Where("document_id = ? OR email = ?", documentID, email).First(user)
+	result := tx.Preload("Doctor").Preload("Addresses").Where("document_id = ? OR email = ?", documentID, email).First(user)
 
 	if result.Error != nil {
 		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
@@ -115,7 +115,7 @@ func (rp *repository) List(ctx context.Context, filter *user_repository_contract
 
 	users := new([]entities.User)
 
-	query := tx.Preload("Doctor")
+	query := tx.Preload("Doctor").Preload("Addresses")
 
 	query = query.Where("users.deleted_at IS NULL AND users.role = ?", filter.Role)
 
@@ -144,6 +144,20 @@ func (rp *repository) List(ctx context.Context, filter *user_repository_contract
 		}
 		if filter.AvgRating != nil {
 			query = query.Where("doctors.avg_rating >= ?", *filter.AvgRating)
+		}
+	}
+
+	if filter.City != nil || filter.State != nil || filter.Zip != nil {
+		query = query.Joins("JOIN addresses ON addresses.user_id = users.id AND addresses.deleted_at IS NULL")
+
+		if filter.City != nil {
+			query = query.Where("addresses.city LIKE ?", fmt.Sprintf("%%%s%%", *filter.City))
+		}
+		if filter.State != nil {
+			query = query.Where("addresses.state LIKE ?", fmt.Sprintf("%%%s%%", *filter.State))
+		}
+		if filter.Zip != nil {
+			query = query.Where("addresses.zip LIKE ?", fmt.Sprintf("%%%s%%", *filter.Zip))
 		}
 	}
 

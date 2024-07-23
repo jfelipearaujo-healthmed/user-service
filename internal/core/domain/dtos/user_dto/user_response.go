@@ -15,14 +15,28 @@ type UserResponse struct {
 	Phone      string `json:"phone"`
 	Role       string `json:"role"`
 
-	DoctorMedicalID string  `json:"medical_id,omitempty"`
-	DoctorSpecialty string  `json:"specialty,omitempty"`
-	DoctorPrice     float64 `json:"price,omitempty"`
-	AvgRating       float64 `json:"avg_rating,omitempty"`
-	TotalPatients   int     `json:"total_patients,omitempty"`
+	Doctor    *DoctorResponse   `json:"doctor,omitempty"`
+	Addresses []AddressResponse `json:"addresses,omitempty"`
 
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
+}
+
+type DoctorResponse struct {
+	MedicalID     string  `json:"medical_id"`
+	Specialty     string  `json:"specialty"`
+	Price         float64 `json:"price"`
+	AvgRating     float64 `json:"avg_rating"`
+	TotalPatients int     `json:"total_patients"`
+}
+
+type AddressResponse struct {
+	Street       string `json:"street"`
+	Number       string `json:"number"`
+	Neighborhood string `json:"neighborhood"`
+	City         string `json:"city"`
+	State        string `json:"state"`
+	Zip          string `json:"zip"`
 }
 
 func MapFromDomain(user *entities.User) *UserResponse {
@@ -40,11 +54,26 @@ func MapFromDomain(user *entities.User) *UserResponse {
 	}
 
 	if user.Doctor != nil {
-		res.DoctorMedicalID = user.Doctor.MedicalID
-		res.DoctorSpecialty = user.Doctor.Specialty
-		res.DoctorPrice = user.Doctor.Price
-		res.AvgRating = user.Doctor.AvgRating
-		res.TotalPatients = user.Doctor.TotalPatients
+		res.Doctor = &DoctorResponse{
+			MedicalID:     user.Doctor.MedicalID,
+			Specialty:     user.Doctor.Specialty,
+			Price:         user.Doctor.Price,
+			AvgRating:     user.Doctor.AvgRating,
+			TotalPatients: user.Doctor.TotalPatients,
+		}
+	}
+
+	res.Addresses = make([]AddressResponse, len(user.Addresses))
+
+	for i := range user.Addresses {
+		res.Addresses[i] = AddressResponse{
+			Street:       user.Addresses[i].Street,
+			Number:       user.Addresses[i].Number,
+			Neighborhood: user.Addresses[i].Neighborhood,
+			City:         user.Addresses[i].City,
+			State:        user.Addresses[i].State,
+			Zip:          user.Addresses[i].Zip,
+		}
 	}
 
 	return res

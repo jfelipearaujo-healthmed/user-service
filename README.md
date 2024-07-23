@@ -43,24 +43,46 @@ Legend:
 - 💤: Not started
 
 
-| Completed | Method | Endpoint                    | Description                               | User Role      |
-| --------- | ------ | --------------------------- | ----------------------------------------- | -------------- |
-| ✅         | POST   | `/users`                    | Create a user                             | Doctor/Patient |
-| ✅         | GET    | `/users/me`                 | Get the current user                      | Doctor/Patient |
-| ✅         | PUT    | `/users/me`                 | Update a user                             | Doctor/Patient |
-| ✅         | GET    | `/users/doctors`            | Get doctors by Medical ID, specialty, etc | Patient        |
-| ✅         | GET    | `/users/doctors/{doctorId}` | Get doctor by ID                          | Patient        |
+| Completed | Method | Endpoint                    | Description                                            | User Role      |
+| --------- | ------ | --------------------------- | ------------------------------------------------------ | -------------- |
+| ✅         | POST   | `/users`                    | Create a user                                          | Doctor/Patient |
+| ✅         | GET    | `/users/me`                 | Get the current user                                   | Doctor/Patient |
+| ✅         | PUT    | `/users/me`                 | Update a user                                          | Doctor/Patient |
+| ✅         | GET    | `/users/doctors`            | Get doctors by Medical ID, specialty, city, state, etc | Patient        |
+| ✅         | GET    | `/users/doctors/{doctorId}` | Get doctor by ID                                       | Patient        |
 
 
 # Diagrams
 
-## User Handling
+## Creating a User Flow
 
-In this diagram, we can see all the possible interactions between the user and the service.
+In this diagram we can see the simplified flow of the user creation.
 
-Attention: The user could be a doctor or a patient.
+![create_user](./docs/create_user.svg)
 
-![user_handling](./docs/user_creation.svg)
+## Getting a User Flow
+
+In this diagram we can see the simplified flow of the user getting.
+
+![get_user](./docs/get_user.svg)
+
+## Updating a User Flow
+
+In this diagram we can see the simplified flow of the user updating.
+
+![update_user](./docs/update_user.svg)
+
+## Searching Doctors Flow
+
+In this diagram we can see the simplified flow of the user searching doctors.
+
+![search_doctors](./docs/search_doctors.svg)
+
+## Getting a Doctor Flow
+
+In this diagram we can see the simplified flow of the user getting a doctor.
+
+![get_doctor](./docs/get_doctor.svg)
 
 # License
 

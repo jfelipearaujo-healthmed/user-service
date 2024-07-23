@@ -38,13 +38,25 @@ func (uc *useCase) Execute(ctx context.Context, request *user_dto.CreateUserRequ
 		DocumentID: request.DocumentID,
 		Phone:      request.Phone,
 		Role:       request.Role,
+		Addresses:  []entities.Address{},
+	}
+
+	if request.Address != nil {
+		user.Addresses = append(user.Addresses, entities.Address{
+			Street:       request.Address.Street,
+			Number:       request.Address.Number,
+			Neighborhood: request.Address.Neighborhood,
+			City:         request.Address.City,
+			State:        request.Address.State,
+			Zip:          request.Address.Zip,
+		})
 	}
 
 	if user.IsDoctor() {
 		user.Doctor = &entities.Doctor{
-			MedicalID: *request.DoctorMedicalID,
-			Specialty: *request.DoctorSpecialty,
-			Price:     *request.DoctorPrice,
+			MedicalID: request.Doctor.MedicalID,
+			Specialty: request.Doctor.Specialty,
+			Price:     request.Doctor.Price,
 		}
 	}
 
