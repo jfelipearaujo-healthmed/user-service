@@ -17,6 +17,10 @@ type Filter struct {
 	Specialty *string  `query:"specialty" json:"specialty" validate:"omitempty,min=5,max=255"`
 	AvgRating *float64 `query:"avg_rating" json:"avg_rating" validate:"omitempty,min=1,max=5"`
 
+	City  *string `query:"city" json:"city" validate:"omitempty,min=1,max=255"`
+	State *string `query:"state" json:"state" validate:"omitempty,min=1,max=255"`
+	Zip   *string `query:"zip" json:"zip" validate:"omitempty,min=1,max=255"`
+
 	RoleFilter role.Role
 }
 
@@ -27,7 +31,10 @@ func (f *Filter) IsEmpty() bool {
 		f.Phone == nil &&
 		f.MedicalID == nil &&
 		f.Specialty == nil &&
-		f.AvgRating == nil
+		f.AvgRating == nil &&
+		f.City == nil &&
+		f.State == nil &&
+		f.Zip == nil
 }
 
 type UseCase interface {

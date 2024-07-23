@@ -33,6 +33,9 @@ func ToRepositoryFilter(filter *list_users_contract.Filter) *user_repository_con
 		MedicalID:  filter.MedicalID,
 		Specialty:  filter.Specialty,
 		AvgRating:  filter.AvgRating,
+		City:       filter.City,
+		State:      filter.State,
+		Zip:        filter.Zip,
 		Role:       filter.RoleFilter,
 	}
 }

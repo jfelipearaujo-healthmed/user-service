@@ -1,5 +1,5 @@
 @host=http://localhost:5000
-@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjUsInJvbGUiOiJwYXRpZW50IiwiZXhwIjoxNzI5Mzg4NTk3fQ.M1mbgSMeotwIoavZUjeRO40-Y0XKVgQnpn7I8A8vo3Y
+@token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOjEsInJvbGUiOiJwYXRpZW50IiwiZXhwIjoxNzI5Mzg4NTk3fQ.FUkh_KnBFRfPxfZvyugqjKkJhx52PDkGRDJODxCIAKU
 
 ### Health Check
 GET {{host}}/health
@@ -16,9 +16,19 @@ Content-Type: application/json
     "document_id": "65839462039",
     "phone": "1234567890",
     "role": "doctor",
-    "medical_id": "223344-SP",
-    "specialty": "Psicologist",
-    "price": 120
+    "doctor": {
+        "medical_id": "223344-SP",
+        "specialty": "Psicologist",
+        "price": 120
+    },
+    "address": {
+        "street": "Rua 123",
+        "number": "123",
+        "neighborhood": "Centro",
+        "city": "São Paulo",
+        "state": "SP",
+        "zip": "01234567"
+    }
 }
 
 ### Create a User (patient)
@@ -31,7 +41,15 @@ Content-Type: application/json
     "password": "12345678",
     "document_id": "73047767068",
     "phone": "1234567890",
-    "role": "patient"
+    "role": "patient",
+    "address": {
+        "street": "Rua 123",
+        "number": "123",
+        "neighborhood": "Centro",
+        "city": "São Paulo",
+        "state": "SP",
+        "zip": "01234567"
+    }
 }
 
 ### Get User
@@ -59,7 +77,7 @@ Authorization: Bearer {{token}}
 }
 
 ### List Doctors
-GET {{host}}/api/v1/users/doctors?medical_id=SP&specialty=Psicologist
+GET {{host}}/api/v1/users/doctors?state=SP
 Content-Type: application/json
 Authorization: Bearer {{token}}
 

@@ -44,6 +44,7 @@ func (svc *DbService) Connect(config *config.Config) error {
 	if err := conn.AutoMigrate(
 		&entities.User{},
 		&entities.Doctor{},
+		&entities.Address{},
 	); err != nil {
 		return err
 	}

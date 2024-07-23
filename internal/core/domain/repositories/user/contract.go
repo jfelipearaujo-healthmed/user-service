@@ -17,6 +17,10 @@ type ListFilter struct {
 	Specialty *string
 	AvgRating *float64
 
+	City  *string
+	State *string
+	Zip   *string
+
 	Role role.Role
 }
 
