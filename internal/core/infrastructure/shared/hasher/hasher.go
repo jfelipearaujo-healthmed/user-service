@@ -1,19 +1,33 @@
 package hasher
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"context"
+	"log/slog"
 
-type Hasher interface {
-	HashPassword(password string) (string, error)
-}
+	"golang.org/x/crypto/bcrypt"
+)
 
-type hasher struct {
+type service struct {
 }
 
 func NewHasher() Hasher {
-	return &hasher{}
+	return &service{}
 }
 
-func (h *hasher) HashPassword(password string) (string, error) {
+func (h *service) HashPassword(ctx context.Context, password string) (string, error) {
 	bytes, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-	return string(bytes), err
+	if err != nil {
+		slog.ErrorContext(ctx, "error hashing password", "error", err)
+		return "", err
+	}
+	return string(bytes), nil
+}
+
+func (h *service) ComparePassword(ctx context.Context, password string, hashedPassword string) bool {
+	err := bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
+	if err != nil {
+		slog.ErrorContext(ctx, "error comparing password", "error", err)
+		return false
+	}
+	return true
 }

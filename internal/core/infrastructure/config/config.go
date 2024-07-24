@@ -36,11 +36,16 @@ type CacheConfig struct {
 	DB             int    `env:"DB, default=0"`
 }
 
+type TokenConfig struct {
+	SignKey string `env:"SIGN_KEY"`
+}
+
 type Config struct {
 	ApiConfig   *ApiConfig      `env:",prefix=API_"`
 	DbConfig    *DatabaseConfig `env:",prefix=DB_"`
 	CloudConfig *CloudConfig    `env:",prefix=AWS_"`
 	CacheConfig *CacheConfig    `env:",prefix=CACHE_"`
+	TokenConfig *TokenConfig    `env:",prefix=TOKEN_"`
 }
 
 func LoadFromEnv(ctx context.Context) (*Config, error) {
