@@ -9,6 +9,7 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	awsConfig "github.com/aws/aws-sdk-go-v2/config"
+	rating_doctor_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/doctor/rating_doctor"
 	create_user_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/create_user"
 	get_user_by_id_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/get_user_by_id"
 	list_users_uc "github.com/jfelipearaujo-healthmed/user-service/internal/core/application/use_cases/user/list_users"
@@ -19,6 +20,7 @@ import (
 	user_repository "github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/repositories/user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/shared/hasher"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/cache"
+	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/doctor/rating_doctor"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/health"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/create_user"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/handlers/user/get_doctor_by_id"
@@ -100,6 +102,8 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 			UpdateUserUseCase:  update_user_uc.NewUseCase(cache, userRepository, doctorRepository),
 			ListUsersUseCase:   list_users_uc.NewUseCase(userRepository),
 			LoginUserUseCase:   login_user_uc.NewUseCase(userRepository, tokenService, hasher),
+
+			RatingDoctorUseCase: rating_doctor_uc.NewUseCase(doctorRepository),
 		},
 	}, nil
 }
@@ -141,6 +145,7 @@ func (server *Server) addUserRoutes(g *echo.Group) {
 	updateUserHandler := update_user.NewHandler(server.UpdateUserUseCase)
 	listUsersHandler := list_users.NewHandler(server.ListUsersUseCase)
 	loginUserHandler := login_user.NewHandler(server.LoginUserUseCase)
+	ratingDoctorHandler := rating_doctor.NewHandler(server.RatingDoctorUseCase)
 
 	g.POST("/users", userHandler.Handle)
 	g.POST("/users/login", loginUserHandler.Handle)
@@ -159,4 +164,7 @@ func (server *Server) addUserRoutes(g *echo.Group) {
 		token.Middleware(),
 		role.MiddlewareAllowRole(role.Patient),
 		role.MiddlewareFilterRole(role.Doctor))
+	g.POST("/users/doctors/:doctorId/ratings", ratingDoctorHandler.Handle,
+		token.Middleware(),
+		role.MiddlewareAllowRole(role.Patient))
 }

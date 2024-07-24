@@ -3,6 +3,7 @@ package server
 import (
 	doctor_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/doctor"
 	user_repository_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/repositories/user"
+	rating_doctor_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/doctor/rating_doctor"
 	create_user_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/create_user"
 	get_user_by_id_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/get_user_by_id"
 	list_users_contract "github.com/jfelipearaujo-healthmed/user-service/internal/core/domain/use_cases/user/list_users"
@@ -29,4 +30,6 @@ type Dependencies struct {
 	UpdateUserUseCase  update_user_contract.UseCase
 	ListUsersUseCase   list_users_contract.UseCase
 	LoginUserUseCase   login_user_contract.UseCase
+
+	RatingDoctorUseCase rating_doctor_contract.UseCase
 }
