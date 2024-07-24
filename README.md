@@ -43,13 +43,15 @@ Legend:
 - 💤: Not started
 
 
-| Completed | Method | Endpoint                    | Description                                            | User Role      |
-| --------- | ------ | --------------------------- | ------------------------------------------------------ | -------------- |
-| ✅         | POST   | `/users`                    | Create a user                                          | Doctor/Patient |
-| ✅         | GET    | `/users/me`                 | Get the current user                                   | Doctor/Patient |
-| ✅         | PUT    | `/users/me`                 | Update a user                                          | Doctor/Patient |
-| ✅         | GET    | `/users/doctors`            | Get doctors by Medical ID, specialty, city, state, etc | Patient        |
-| ✅         | GET    | `/users/doctors/{doctorId}` | Get doctor by ID                                       | Patient        |
+| Completed | Method | Endpoint                            | Description                                            | User Role      |
+| --------- | ------ | ----------------------------------- | ------------------------------------------------------ | -------------- |
+| ✅         | POST   | `/users/login`                      | Login a user                                           | Doctor/Patient |
+| ✅         | POST   | `/users`                            | Create a user                                          | Doctor/Patient |
+| ✅         | GET    | `/users/me`                         | Get the current user                                   | Doctor/Patient |
+| ✅         | PUT    | `/users/me`                         | Update a user                                          | Doctor/Patient |
+| ✅         | GET    | `/users/doctors`                    | Get doctors by Medical ID, specialty, city, state, etc | Patient        |
+| ✅         | GET    | `/users/doctors/{doctorId}`         | Get doctor by ID                                       | Patient        |
+| 💤         | POST   | `/users/doctors/{doctorId}/ratings` | Rate a doctor                                          | Patient        |
 
 
 # Diagrams

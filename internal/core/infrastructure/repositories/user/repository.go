@@ -110,6 +110,27 @@ func (rp *repository) GetByDocumentIDOrEmail(ctx context.Context, documentID str
 	return user, nil
 }
 
+func (rp *repository) GetByMedicalID(ctx context.Context, medicalID string) (*entities.User, error) {
+	tx := rp.dbService.Instance.WithContext(ctx)
+
+	user := new(entities.User)
+	result := tx.
+		Preload("Doctor").
+		Preload("Addresses").
+		Joins("JOIN doctors ON doctors.user_id = users.id AND doctors.deleted_at IS NULL").
+		Where("doctors.medical_id = ?", medicalID).First(user)
+
+	if result.Error != nil {
+		if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+			return nil, app_error.New(http.StatusNotFound, fmt.Sprintf("user with medical id %s not found", medicalID))
+		}
+
+		return nil, result.Error
+	}
+
+	return user, nil
+}
+
 func (rp *repository) List(ctx context.Context, filter *user_repository_contract.ListFilter) ([]entities.User, error) {
 	tx := rp.dbService.Instance.WithContext(ctx)
 

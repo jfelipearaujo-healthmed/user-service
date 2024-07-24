@@ -34,7 +34,7 @@ func (h *handler) Handle(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	passHashed, err := h.hasher.HashPassword(req.Password)
+	passHashed, err := h.hasher.HashPassword(ctx, req.Password)
 	if err != nil {
 		return http_response.BadRequest(c, "unable to hash the password", err)
 	}

@@ -29,6 +29,7 @@ type Repository interface {
 	GetByEmail(ctx context.Context, email string) (*entities.User, error)
 	GetByDocumentID(ctx context.Context, documentID string) (*entities.User, error)
 	GetByDocumentIDOrEmail(ctx context.Context, documentID string, email string) (*entities.User, error)
+	GetByMedicalID(ctx context.Context, medicalID string) (*entities.User, error)
 	List(ctx context.Context, filter *ListFilter) ([]entities.User, error)
 	Create(ctx context.Context, user *entities.User) (*entities.User, error)
 	Update(ctx context.Context, user *entities.User) (*entities.User, error)
