@@ -56,3 +56,13 @@ func (rp *repository) GetByMedicalID(ctx context.Context, medicalID string, user
 
 	return doctor, nil
 }
+
+func (rp *repository) Update(ctx context.Context, doctor *entities.Doctor) error {
+	tx := rp.dbService.Instance.WithContext(ctx)
+
+	if err := tx.Save(doctor).Error; err != nil {
+		return err
+	}
+
+	return nil
+}

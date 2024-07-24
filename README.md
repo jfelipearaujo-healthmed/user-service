@@ -51,7 +51,7 @@ Legend:
 | ✅         | PUT    | `/users/me`                         | Update a user                                          | Doctor/Patient |
 | ✅         | GET    | `/users/doctors`                    | Get doctors by Medical ID, specialty, city, state, etc | Patient        |
 | ✅         | GET    | `/users/doctors/{doctorId}`         | Get doctor by ID                                       | Patient        |
-| 💤         | POST   | `/users/doctors/{doctorId}/ratings` | Rate a doctor                                          | Patient        |
+| ✅         | POST   | `/users/doctors/{doctorId}/ratings` | Rate a doctor                                          | Patient        |
 
 
 # Diagrams
