@@ -37,7 +37,8 @@ type CacheConfig struct {
 }
 
 type TokenConfig struct {
-	SignKey string `env:"SIGN_KEY"`
+	SignKey           string `env:"SIGN_KEY"`
+	SignKeySecretName string `env:"SIGN_KEY_SECRET_NAME, required"`
 }
 
 type Config struct {

@@ -2,11 +2,13 @@ apiVersion: v1
 kind: Service
 metadata:
   name: user-service
-  namespace: ns-user-service
+  namespace: ns-users
   labels:
     app: user-service
+  # annotations:
+  #   alb.ingress.kubernetes.io/target-type: ip
 spec:
-  type: LoadBalancer
+  type: ClusterIP
   ports:
     - port: 5000
       targetPort: 5000
