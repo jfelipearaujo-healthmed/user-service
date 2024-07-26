@@ -1,22 +1,22 @@
 @startuml update_user
 
-title Update an User Flow
+title Atualização de Usuário
 
 actor "User" as user
 participant "User Service" as user_service
 participant "Database" as database
 
 note over user
-In this example, the user could be
-a **doctor** or a **patient**.
+O usuário pode ser um **médico**
+ou um **paciente**.
 end note
 
 user -> user_service: PUT /users/me\n(Bearer JWT)
 activate user_service
-user_service -> user_service: Get user based on JWT
-user_service -> user_service: Validate new information
-user_service -> database: Update user
-database --> user_service: Updated
+user_service -> user_service: Obtém o usuário atual
+user_service -> user_service: Valida as alterações
+user_service -> database: Atualiza o usuário
+database --> user_service: Atualizado
 user_service --> user: 200 OK
 deactivate user_service
 
