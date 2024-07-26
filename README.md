@@ -56,6 +56,12 @@ Legend:
 
 # Diagrams
 
+## Login Flow
+
+In this diagram we can see the simplified flow of the user login.
+
+![login](./docs/login.svg)
+
 ## Creating a User Flow
 
 In this diagram we can see the simplified flow of the user creation.

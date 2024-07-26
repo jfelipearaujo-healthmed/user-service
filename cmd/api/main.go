@@ -33,7 +33,6 @@ func main() {
 
 		if err := godotenv.Load("../../.env"); err != nil {
 			slog.ErrorContext(ctx, "error loading .env file", "error", err)
-			panic(err)
 		}
 	}
 

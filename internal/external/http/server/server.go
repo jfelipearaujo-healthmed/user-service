@@ -86,7 +86,14 @@ func NewServer(ctx context.Context, config *config.Config) (*Server, error) {
 	doctorRepository := doctor_repository.NewRepository(dbService)
 
 	hasher := hasher.NewHasher()
-	tokenService := tokenService.NewService(config)
+
+	tokenSignKey, err := secretService.GetSecret(ctx, config.TokenConfig.SignKeySecretName)
+	if err != nil {
+		slog.ErrorContext(ctx, "error getting secret", "secret_name", config.TokenConfig.SignKeySecretName, "error", err)
+		return nil, err
+	}
+
+	tokenService := tokenService.NewService(tokenSignKey)
 
 	return &Server{
 		Config: config,

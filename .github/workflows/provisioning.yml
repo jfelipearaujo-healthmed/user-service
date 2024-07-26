@@ -86,7 +86,7 @@ jobs:
         run: make k8s-deploy id=${{ secrets.AWS_ACCOUNT_ID }}
 
       - name: Update deployment
-        run: kubectl set image deployments/user-service user-service=jsfelipearaujo/user-service:v${{ github.run_number }} -n ns-user-service
+        run: kubectl set image deployments/user-service user-service=jsfelipearaujo/user-service:v${{ github.run_number }} -n ns-users
 
       - name: Wait for deployment
-        run: kubectl rollout status deployments/user-service -n ns-user-service
+        run: kubectl rollout status deployments/user-service -n ns-users

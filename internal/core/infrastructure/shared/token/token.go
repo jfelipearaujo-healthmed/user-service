@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/jfelipearaujo-healthmed/user-service/internal/core/infrastructure/config"
 	"github.com/jfelipearaujo-healthmed/user-service/internal/external/http/middlewares/role"
 )
 
@@ -12,9 +11,9 @@ type token struct {
 	signingKey string
 }
 
-func NewService(config *config.Config) TokenService {
+func NewService(signingKey string) TokenService {
 	return &token{
-		signingKey: config.TokenConfig.SignKey,
+		signingKey: signingKey,
 	}
 }
 

@@ -2,7 +2,7 @@ apiVersion: v1
 kind: ConfigMap
 metadata:
   name: user-service-config
-  namespace: ns-user-service
+  namespace: ns-users
   labels:
     app: user-service
 data:
@@ -10,6 +10,8 @@ data:
   API_ENV_NAME: production
   API_VERSION: v1
   DB_URL: todo
-  DB_URL_SECRET_NAME: db-user-service-url-secret
+  DB_URL_SECRET_NAME: db-users-url-secret
   CACHE_HOST: todo
-  CACHE_HOST_SECRET_NAME: cache-host-secret
+  CACHE_HOST_SECRET_NAME: healthmed-cache-url-secret
+  TOKEN_SIGN_KEY: todo
+  TOKEN_SIGN_KEY_SECRET_NAME: jwt-signing-key
