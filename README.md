@@ -1,23 +1,26 @@
 # User Service
 
-Service responsible to manage the users
+Este serviço é responsável pelo gerenciamento de usuários, ele criará, atualizará, obterá e excluirá usuários (pacientes e médicos).
 
-# Local Development
+Além disso, permite que os pacientes pesquisem médicos por especialidade, cidade, estado, etc.
 
-## Requirements
+# Desenvolvimento Local
 
-- [Kubernetes](https://kubernetes.io/)
+## Requisitos
+
+- [Terraform](https://www.terraform.io/downloads.html)
+- [Terraform Docs](https://github.com/terraform-docs/terraform-docs)
 - [AWS CLI](https://aws.amazon.com/cli/)
 
-## Manual deployment
+## Implantação manual
 
-### Attention
+### Atenção
 
-Before deploying the service, make sure to set the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` environment variables.
+Antes de implantar o cluster, certifique-se de definir as variáveis ​​de ambiente `AWS_ACCESS_KEY_ID` e `AWS_SECRET_ACCESS_KEY`.
 
-Be aware that this process will take a few minutes (~4 minutes) to be completed.
+Esteja ciente de que esse processo levará alguns minutos (~4 minutos) para ser concluído.
 
-To deploy the service manually, run the following commands in order:
+Para implantar o cluster manualmente, execute os seguintes comandos em ordem:
 
 ```bash
 make init
@@ -25,73 +28,66 @@ make check # this will execute fmt, validate and plan
 make apply
 ```
 
-To destroy the service, run the following command:
+Para destruir o cluster, execute o seguinte comando:
 
 ```bash
 make destroy
 ```
 
-## Automated deployment
+## Implantação Automatizada
 
-The automated deployment is triggered by a GitHub Action.
+A implantação automatizada é acionada por uma GitHub Action.
 
-# Endpoints
+# Rotas
 
-Legend:
-- ✅: Development completed
-- 🚧: In progress
-- 💤: Not started
+| Método | Rota                                | Descrição                                                | Papel do Usuário |
+| ------ | ----------------------------------- | -------------------------------------------------------- | ---------------- |
+| POST   | `/users/login`                      | Login de um usuário                                      | Médico/Paciente  |
+| POST   | `/users`                            | Cria um usuário                                          | Médico/Paciente  |
+| GET    | `/users/me`                         | Obtém o usuário atual                                    | Médico/Paciente  |
+| PUT    | `/users/me`                         | Atualiza um usuário                                      | Médico/Paciente  |
+| GET    | `/users/doctors`                    | Obtém médicos por ID, especialidade, cidade, estado, etc | Paciente         |
+| GET    | `/users/doctors/{doctorId}`         | Obtém o médico por ID                                    | Paciente         |
+| POST   | `/users/doctors/{doctorId}/ratings` | Avalia um médico                                         | Paciente         |
 
+# Diagramas
 
-| Completed | Method | Endpoint                            | Description                                            | User Role      |
-| --------- | ------ | ----------------------------------- | ------------------------------------------------------ | -------------- |
-| ✅         | POST   | `/users/login`                      | Login a user                                           | Doctor/Patient |
-| ✅         | POST   | `/users`                            | Create a user                                          | Doctor/Patient |
-| ✅         | GET    | `/users/me`                         | Get the current user                                   | Doctor/Patient |
-| ✅         | PUT    | `/users/me`                         | Update a user                                          | Doctor/Patient |
-| ✅         | GET    | `/users/doctors`                    | Get doctors by Medical ID, specialty, city, state, etc | Patient        |
-| ✅         | GET    | `/users/doctors/{doctorId}`         | Get doctor by ID                                       | Patient        |
-| ✅         | POST   | `/users/doctors/{doctorId}/ratings` | Rate a doctor                                          | Patient        |
+## Fluxo de Login
 
-
-# Diagrams
-
-## Login Flow
-
-In this diagram we can see the simplified flow of the user login.
+No diagrama abaixo podemos ver o fluxo simplificado de login.
 
 ![login](./docs/login.svg)
 
-## Creating a User Flow
+## Fluxo de Criação de Usuário
 
-In this diagram we can see the simplified flow of the user creation.
+No diagrama abaixo podemos ver o fluxo simplificado de criação de usuário.
 
 ![create_user](./docs/create_user.svg)
 
-## Getting a User Flow
+## Fluxo de Obtenção de Usuário
 
-In this diagram we can see the simplified flow of the user getting.
+No diagrama abaixo podemos ver o fluxo simplificado de obtenção de usuário.
 
 ![get_user](./docs/get_user.svg)
 
-## Updating a User Flow
+## Fluxo de Atualização de Usuário
 
-In this diagram we can see the simplified flow of the user updating.
+No diagrama abaixo podemos ver o fluxo simplificado de atualização de usuário.
 
 ![update_user](./docs/update_user.svg)
 
-## Searching Doctors Flow
+## Fluxo de Pesquisa de Médicos
 
-In this diagram we can see the simplified flow of the user searching doctors.
+No diagrama abaixo podemos ver o fluxo simplificado de pesquisa de médicos.
 
 ![search_doctors](./docs/search_doctors.svg)
 
-## Getting a Doctor Flow
+## Fluxo de Obtenção de Médico
 
-In this diagram we can see the simplified flow of the user getting a doctor.
+No diagrama abaixo podemos ver o fluxo simplificado de obtenção de médico.
 
 ![get_doctor](./docs/get_doctor.svg)
 
-# License
+# Licença
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+Este projeto é licenciado sob a Licença MIT - veja o arquivo [LICENSE](LICENSE) para detalhes.

@@ -1,27 +1,26 @@
 @startuml search_doctors
 
-title Search Doctors Flow
+title Pesquisa de Médicos
 
 actor "User" as user
 participant "User Service" as user_service
 participant "Database" as database
 
 note over user
-In this example, the user could be
-only a **patient**.
+O usuário pode ser um **paciente**.
 end note
 
 user -> user_service: GET /users/doctors\n(Bearer JWT)
 activate user_service
-user_service -> database: Get doctors
+user_service -> database: Busca os médicos
 
 note over database
-This query could be filtered by
-specialty, medical ID, street,
-state, zip, etc.
+Esta consulta pode ser filtrada por
+especialidade, ID médica, rua,
+estado, CEP, etc.
 end note
 
-database --> user_service: Found
+database --> user_service: Encontrados
 user_service --> user: 200 OK
 deactivate user_service
 

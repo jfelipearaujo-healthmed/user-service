@@ -1,38 +1,39 @@
 @startuml login
 
-title Login Flow
+title Login de Usuário
 
 actor "User" as user
 participant "User Service" as user_service
 participant "Database" as database
 
 note over user
-In this example, the user could be
-a **doctor** or a **patient**.
+O usuário pode ser um **médico**
+ou um **paciente**.
 end note
 
-user -> user_service: POST /users/login\n(username, password)
+user -> user_service: POST /users/login
 
 note over user_service
-The user service will validate the
-credentials accordingly to the login
-method chosen by the user.
+O serviço do usuário validará as
+credenciais de acordo com o método de login
+escolhido pelo usuário.
 
-If the user is a **doctor**, the
-service will validate the
-**medical id** and **password**.
+Se o usuário for um **médico**, o
+serviço validará o
+**ID médico** e a **senha**.
 
-If the user is a **patient**, the
-service will validate the
-**email** or **document id (cpf)**
-and **password**.
+Se o usuário for um **paciente**, o
+serviço validará o
+**e-mail** ou **ID do documento (CPF)**
+e a **senha**.
 end note
 
 activate user_service
-user_service -> user_service: Validate user
-user_service -> database: Create user
-database --> user_service: Created
-user_service --> user: 201 Created
+user_service -> user_service: Valida os dados
+user_service -> database: Verifica se o usuário existe
+database --> user_service: Usuário encontrado
+user_service -> user_service: Cria um token de acesso
+user_service --> user: 200 OK
 deactivate user_service
 
 @enduml

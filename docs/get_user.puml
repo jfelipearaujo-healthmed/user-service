@@ -1,21 +1,21 @@
 @startuml get_user
 
-title Getting an User Flow
+title Obtenção de Usuário
 
 actor "User" as user
 participant "User Service" as user_service
 participant "Database" as database
 
 note over user
-In this example, the user could be
-a **doctor** or a **patient**.
+O usuário pode ser um **médico**
+ou um **paciente**.
 end note
 
 user -> user_service: GET /users/me\n(Bearer JWT)
 activate user_service
-user_service -> user_service: Get user based on JWT
-user_service -> database: Get user
-database --> user_service: Found
+user_service -> user_service: Obtém o usuário atual
+user_service -> database: Busca o usuário atual
+database --> user_service: Encontrado
 user_service --> user: 200 OK
 deactivate user_service
 
